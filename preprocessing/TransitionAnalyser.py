@@ -26,7 +26,7 @@ class TransitionAnalyser:
 
         # Generating outputs from current state
         for pol in self.pol_list:
-            partial_curr = [inp] + curr_array
+            partial_curr = curr_array + [inp]
             outputs.append(np.mod(np.dot(partial_curr, pol), 2))
 
         # Generating next state
@@ -44,11 +44,11 @@ class TransitionAnalyser:
 
 
 if __name__ == "__main__":
-    p1 = np.array([1, 1, 0, 1])
-    p2 = np.array([1, 0, 1, 1])
-    p3 = np.array([1, 1, 1, 1])
+    p1 = np.array([0, 0, 1])
+    p2 = np.array([0, 1, 1])
+    p3 = np.array([1, 0, 1])
     polarr = [p1, p2, p3]
     gen = TransitionAnalyser(polarr)
     # gen.transition(0b111111, 1)
     for ele in gen.table_generate(3):
-        print(ele)
+        print(gen.table_generate(3).index(ele), ele)
