@@ -18,7 +18,7 @@ from polynomial_codifiers.PolyDecoder import PolyDecoder
 
 # Script which generates N random bits and simulates a random channel with probabilities ranging from 0.5 to 10e-6.
 # It then plots a graph comparing different encoding processes.
-N = 10000
+N = 1000
 
 chosen_matrices = [5]
 
