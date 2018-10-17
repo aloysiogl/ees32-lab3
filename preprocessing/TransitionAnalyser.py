@@ -44,10 +44,11 @@ class TransitionAnalyser:
 
 
 if __name__ == "__main__":
-    p1 = np.array([1,0,0,1,1,1,1])
-    p2 = np.array([1,1,0,1,1,0,1])
-    polarr = [p1, p2]
+    p1 = np.array([1, 1, 0, 1])
+    p2 = np.array([1, 0, 1, 1])
+    p3 = np.array([1, 1, 1, 1])
+    polarr = [p1, p2, p3]
     gen = TransitionAnalyser(polarr)
-    gen.transition(0b111111, 1)
-    for ele in gen.table_generate(6):
+    # gen.transition(0b111111, 1)
+    for ele in gen.table_generate(3):
         print(ele)
