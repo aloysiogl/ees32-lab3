@@ -1,0 +1,79 @@
+\section{Algoritmos para códigos cíclicos}
+A algoritmo desenvolvido pode ser dividido nas seguintes etapas: obtenção dos polinômios geradores, codificação, e decodificação. Cada uma dessas etapas esta descrita nas subseções seguintes.
+
+\subsection{Obtenção dos polinômios geradores}
+Foram escolhidos, inicialmente, cinco tipos de códigos deferentes com duplas $(k, n)$ mostradas a seguir contidas em $S = \{(6, 10), (7, 12), (8, 14), (9, 15), (9, 16)\}$. Para cada elemento de $S$ foram gerados todos os polinômios geradores $g_{ij}$ em que $i$ é o índice em $S$ e $j$ o índice de um polinômio qualquer que gere um código $S_i$. Com este fim, foi utilizada a função \textit{cyclpoly} do MATLAB.
+
+Para cada $i$ dentre todos os $j$ escolhe-se o polinômio $g_{ij}$ que gera o código de maior distância mínima. Para isso, geraram-se todas as palavras informação e calculou-se o peso de cada palavra código a fim de achar a distância mínima. A complexidade desta etapa é $\mathcal{O}(2^kn^{3.37})$. Considerou-se o pior caso da multiplicação de matriz $\mathcal{O}(n^{2.37})$, uma vez que para o cálculo da palavra código pela palavra informação utilizou-se a multiplicação matricial. O algoritmo descrito foi implementado na linguagem \textit{Python}.
+
+A principal dificuldade desta parte do código foi achar a distância mínima, no entanto, muito se pôde aproveitar da atividade anterior. Dessa forma a dificuldade desta etapa não foi tão grande.
+
+\subsection{Codificação}
+
+A codificação consistiu simplesmente de uma multiplicação de polinômios, a qual foi feita em \textit{Python} utilizando a função \textit{polymul} da biblioteca \textit{numpy}. Dessa forma a complexidade de codificação do sistema ficou $\mathcal{O}(n^2)$ para uma palavra código de tamanho $n$.
+
+Vale ressaltar que o canal utilizado foi exatamente o mesmo do experimento anterior, por isso, sua implementação não será detalhada neste documento.
+
+\subsection{Decodificação}
+
+Esta foi a parte mais desafiadora do experimento por envolver a correção de erros. A decodificação consiste em uma divisão polinomial da palavra código pelo polinômio gerador, considerando que, se houver resto (síndrome), deve ser feita correção de erros.
+
+Vale ressaltar que o código foi implementado em \textit{Python} e que a divisão de polinômios foi implementada seguindo o algoritmo de divisão manual com soma resto 2. A complexidade final do algoritmo de divisão polinomial ficou $\mathcal{O}(n^2)$.
+
+Para corrigir os erros foi implementado o algoritmo sugerido no roteiro do laboratório, que realiza rotações para ser capaz de utilizar unicamente síndromes associadas a erros na primeira posição da palavra código. O pseudocódigo para tal algoritmo é mostrado em Algoritmo \ref{alg:decode}.
+
+\begin{algorithm}
+	\caption{Decodificação}\label{alg:decode}
+	\begin{algorithmic}[Message]
+		\Procedure{$decode$}{$message$}
+			\State $sind \gets calc\_sindrome(message)$
+			
+			\While {$sind \neq all\_zeros$}
+				\If {$sind \in end\_one\_sinds$}
+					\State $change\_first(message)$
+					\State $sind \gets calc\_sindrome(message)$
+				\Else
+				\State $rotate(message, -1)$
+				\State $rotate(sind, -1)$
+					\If{$sind.first = 1$} 
+						\State $sind.first \gets 0$
+						\State $sind \gets sind+g$
+					\EndIf
+				\EndIf
+			\EndWhile
+		\State $message \gets unrotate(message)$\\
+		\Return $divide(message, g)$
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+A parte mais desafiadora da atividade foi encontrar o conjunto de síndromes, representado no algoritmo por $end\_one\_sinds$. Consta em Algoritmo \ref{alg:update_sindromes} o código utilizado para encontrar um conjunto de síndromes associadas a erros que começam em 1 de maneira a garantir que o código de Algoritmo \ref{alg:decode} termine em ao menos $n$ ciclos do laço mais externo.
+
+\begin{algorithm}
+	\caption{Decodificação}\label{alg:update_sindromes}
+	\begin{algorithmic}[Message]
+		\Procedure{$update\_sindrom	es$}{$ $}
+		\State $sind\_map \gets \emptyset$
+		\For {$i \in \{1, len(codeword)\}$}
+			\State $errs \gets list(errors, weigth=i)$
+			\For {$err \in errs$}
+				\State $err_key \gets calc\_sindrome(err)$
+				\If {$err\_key=all\_zeros$}
+					\State $continue$
+				\EndIf
+				
+				\If {$err\_key \notin sind\_map $ $\cup$\\ $weigth(sind\_map[err\_key]) = i$ $\cap$ \\ $error\_ends\_with\_zero(sind\_map[err\_key])$}
+				\State $sind\_map[err\_key] \gets (err.first, i)$
+				\EndIf
+			\EndFor
+		\EndFor
+		\For {$key \in sind\_map$}
+			\If{$error\_ends\_with\_one(sind\_map[err\_key])$}
+				\State $end\_one\_sinds.add(key)$
+			\EndIf
+		\EndFor
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+A complexidade de decodificação do sistema é  $\mathcal{O}(n^2h)$, em que $h$ é o tamanho do conjunto de síndromes.

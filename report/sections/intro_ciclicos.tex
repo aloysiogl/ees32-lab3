@@ -1,0 +1,6 @@
+\section{Introdução sobre códigos cíclicos}
+O códigos cíclicos são um caso especial dos códigos de bloco lineares. Tais códigos têm como propriedade fundamental que uma rotação de uma palavra código gera uma outra palavra código. Essa restrição adiciona informação à estrutura do código, permitindo, assim, que se decodifique a informação transmitida com menor necessidade de se armazenar informações.
+
+É conveniente utilizar a representação polinomial de códigos, a qual é descrita com mais detalhes em \cite{ref:roteiro}. Será adotada a convenção seguinte: serão enviados $n$ bits de código para cada $k$ bits de informação.
+
+Para codificar uma palavra código basta multiplicar esta palavra por um polinômio gerador $g$, o qual é um múltiplo de $1+D^n$ conforme \cite{ref:roteiro}. A decodificação é o processo inverso: a divisão. O resto da divisão é chamado síndrome e será diferente de zero caso haja erro de transmissão. A característica de ciclicidade será utilizada na decodificação. Uma vez que o código é cíclico, pode-se obter todas as síndromes associadas às rotações de um erro a partir da síndrome de uma única rotação. Será possível, dessa maneira, decodificar palavras sem associar erros a síndromes, reduzindo a quantidade de informação armazenada.

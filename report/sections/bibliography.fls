@@ -1,0 +1,11 @@
+PWD /media/vitor/000F8EFA0002DB72/ITA/ELE32/lab2/report/sections
+INPUT /etc/texmf/web2c/texmf.cnf
+INPUT /usr/share/texmf/web2c/texmf.cnf
+INPUT /usr/share/texlive/texmf-dist/web2c/texmf.cnf
+INPUT /var/lib/texmf/web2c/pdftex/pdflatex.fmt
+INPUT /media/vitor/000F8EFA0002DB72/ITA/ELE32/lab2/report/sections/bibliography.tex
+OUTPUT /media/vitor/000F8EFA0002DB72/ITA/ELE32/lab2/report/sections/bibliography.log
+INPUT /media/vitor/000F8EFA0002DB72/ITA/ELE32/lab2/report/sections/bibliography.bbl
+INPUT /media/vitor/000F8EFA0002DB72/ITA/ELE32/lab2/report/sections/bibliography.bbl
+INPUT /usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmti10.tfm

@@ -1,0 +1,21 @@
+# Fdb version 3
+["bibtex bibliography"] 1538338895 "bibliography.aux" "bibliography.bbl" "bibliography" 1538342603
+  "bibliography.aux" 1538338869 8 a94a2480d3289e625eea47cd1b285758 ""
+  "bibliography.bcf" 0 -1 0 ""
+  (generated)
+  "bibliography.bbl"
+  "bibliography.blg"
+["pdflatex"] 1538342603 "bibliography.tex" "/media/vitor/000F8EFA0002DB72/ITA/ELE32/lab2/report/sections/bibliography.pdf" "bibliography" 1538342603
+  "/etc/texmf/web2c/texmf.cnf" 1534087842 1101 af7716885e081ab43982cab7b4672c1a ""
+  "/media/vitor/000F8EFA0002DB72/ITA/ELE32/lab2/report/sections/bibliography.aux" 1538338869 8 a94a2480d3289e625eea47cd1b285758 ""
+  "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
+  "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmti10.tfm" 1480098701 1480 aa8e34af0eb6a2941b776984cf1dfdc4 ""
+  "/usr/share/texlive/texmf-dist/web2c/texmf.cnf" 1520210507 32485 c64754543d8ac501bea6e75e209ea521 ""
+  "/usr/share/texmf/web2c/texmf.cnf" 1520210507 32485 c64754543d8ac501bea6e75e209ea521 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1534089525 4126678 a9dc8e08dc831f44bf30488245a56252 ""
+  "bibliography.bbl" 1538338895 0 d41d8cd98f00b204e9800998ecf8427e "bibtex bibliography"
+  "bibliography.tex" 1538338892 371 65ace04c225d20b9fa6fa0afa154b0ea ""
+  (generated)
+  "/media/vitor/000F8EFA0002DB72/ITA/ELE32/lab2/report/sections/bibliography.pdf"
+  "/media/vitor/000F8EFA0002DB72/ITA/ELE32/lab2/report/sections/bibliography.log"
+  "bibliography.log"

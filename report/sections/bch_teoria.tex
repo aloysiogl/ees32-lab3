@@ -1,0 +1,9 @@
+\section{Introdução sobre BCH}
+
+Códigos cíclicos BCH primitivos são completamente caracterizados por dois parâmetros: $m$ e $t$, ambos naturais, de modo que se usará a notação $BCH(m,t)$ para os individualizar. $m$ é tal que $n=2^m-1$ é o tamanho de bloco do código e $t$ é a distância mínima planejada (necessariamente menor ou igual à distância mínima real). 
+
+O polinômio gerador de $BCH(m,t)$ é obtido pelo mínimo múltiplo comum entre os polinômios mínimos de $\alpha^1, ..., \alpha^{2t}$, em que $\alpha$ é um elemento primitivo de $GF(2^m)$.
+
+A decodificação desses códigos, diferentemente de outros cíclicos e não-cíclicos, não exige que se memorizem associações síndrome-erro e é computacionalmente eficiente, apresentando complexidade $\mathcal{O}(n)$ confirmada em \ref{complexidade_decod}.
+
+O algoritmo utilizado foi retirado de \cite{ref:algoritmo-berlekamp} e é conhecido como "Berlekamp-Massey".
