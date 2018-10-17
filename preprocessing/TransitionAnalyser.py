@@ -11,11 +11,28 @@ class TransitionAnalyser:
         self.m = max(map(len, pol_list))
 
     def transition(self, curr, inp):
+        curr_state = curr
+
+        # Reading current state
         curr_array = []
-        for i in range(self.m):
+        for i in range(self.m-1):
             curr_array.append(curr % 2)
             curr = curr//2
-        print(curr_array)
+        curr_array = list(reversed(curr_array))
+
+        outputs = []
+
+        assert inp // 2 < 1
+
+        # Generating outputs from current state
+        for pol in self.pol_list:
+            partial_curr = [inp] + curr_array
+            outputs.append(np.mod(np.dot(partial_curr, pol), 2))
+
+        # Generating next state
+        next = (curr_state << 1 + inp) % (2**(self.m-1))
+
+        return outputs, next
 
 
 if __name__ == "__main__":
@@ -23,4 +40,4 @@ if __name__ == "__main__":
     p2 = np.array([1,1,0,1,1,0,1])
     polarr = [p1, p2]
     gen = TransitionAnalyser(polarr)
-    TransitionAnalyser.transition(0b110, 1)
+    gen.transition(0b111111, 1)
