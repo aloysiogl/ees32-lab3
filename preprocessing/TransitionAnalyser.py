@@ -50,5 +50,5 @@ if __name__ == "__main__":
     polarr = [p1, p2, p3]
     gen = TransitionAnalyser(polarr)
     # gen.transition(0b111111, 1)
-    for ele in gen.table_generate(3):
-        print(gen.table_generate(3).index(ele), ele)
+    for ele in gen.table_generate(2):
+        print(gen.table_generate(2).index(ele), ele)

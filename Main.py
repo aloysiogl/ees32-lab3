@@ -22,8 +22,16 @@ from convolutional_codifiers.ConvEncoder import ConvEncoder
 # It then plots a graph comparing different encoding processes.
 N = 1000
 
+# Definition for polynomial codifier
 chosen_matrices = [5]
+
+# Definition for convolutional codifier
 chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3)]
+
+# Plotting types
+plot_normal = True
+plot_hamming = False
+plot_cyclic = False
 
 # Reading matrices
 reader = MatrixReader()
@@ -116,29 +124,40 @@ if __name__ == "__main__":
     channels = [Channel(p) for p in ps]
 
     # Generating outputs without encoding, with hamming encoding and with our encoding
-    normal_outputs = normal_process(codes, channels)
-    # hamming_outputs = hamming_process(codes, channels)
-    cyclic_outputs = [cyclic_process(i, codes, channels) for i in chosen_matrices]
+    if plot_normal:
+        normal_outputs = normal_process(codes, channels)
+    if plot_hamming:
+        hamming_outputs = hamming_process(codes, channels)
+    if plot_cyclic:
+        cyclic_outputs = [cyclic_process(i, codes, channels) for i in chosen_matrices]
 
     # Generating chosen matrices for convolutional output
+
     #TODO: implement
 
     # generating convolutional outputs
-    convolutional_outputs = [convolutional_process(ma)]
+    # convolutional_outputs = [convolutional_process(ma)]
 
     # Comparing outputs and plotting a graph
     normal_ps = []
     hamming_ps = []
-    cyclic_ps = [[] for p in range(len(cyclic_outputs))]
+    if plot_cyclic:
+        cyclic_ps = [[] for p in range(len(cyclic_outputs))]
     for c in range(len(channels)):
-        normal_ps.append(1 - np.count_nonzero(normal_outputs[c] == codes) / N)
-        # hamming_ps.append(1 - np.count_nonzero(hamming_outputs[c] == codes)/N)
-        for i in range(len(cyclic_outputs)):
-            cyclic_ps[i].append((1 - np.count_nonzero(cyclic_outputs[i][c] == codes) / N))
-    normal_ps = np.log(normal_ps) / np.log(10)
-    # hamming_ps = np.log(hamming_ps) / np.log(10)
-    for i in range(len(cyclic_ps)):
-        cyclic_ps[i] = np.log(cyclic_ps[i]) / np.log(10)
+        if plot_normal:
+            normal_ps.append(1 - np.count_nonzero(normal_outputs[c] == codes) / N)
+        if plot_hamming:
+            hamming_ps.append(1 - np.count_nonzero(hamming_outputs[c] == codes)/N)
+        if plot_cyclic:
+            for i in range(len(cyclic_outputs)):
+                cyclic_ps[i].append((1 - np.count_nonzero(cyclic_outputs[i][c] == codes) / N))
+    if plot_normal:
+        normal_ps = np.log(normal_ps) / np.log(10)
+    if plot_hamming:
+        hamming_ps = np.log(hamming_ps) / np.log(10)
+    if plot_cyclic:
+        for i in range(len(cyclic_ps)):
+            cyclic_ps[i] = np.log(cyclic_ps[i]) / np.log(10)
     ps = np.log(ps) / np.log(10)
 
     print("Time taken:", time.time() - t, "s")
@@ -146,10 +165,13 @@ if __name__ == "__main__":
     plt.xlim([0, -6])
     plt.xlabel("log(p)")
     plt.ylabel("log(Probabilidade de erro de bit)")
-    plt1 = plt.plot(ps, normal_ps, label="Não codificado")
-    # plt2 = plt.plot(ps, hamming_ps, label="Hamming")
-    plt_cycl = []
-    for i in range(len(cyclic_ps)):
-        plt_cycl.append(plt.plot(ps, cyclic_ps[i], label=reader.get_name(chosen_matrices[i])))
+    if plot_normal:
+        plt1 = plt.plot(ps, normal_ps, label="Não codificado")
+    if plot_hamming:
+        plt2 = plt.plot(ps, hamming_ps, label="Hamming")
+    if plot_cyclic:
+        plt_cycl = []
+        for i in range(len(cyclic_ps)):
+            plt_cycl.append(plt.plot(ps, cyclic_ps[i], label=reader.get_name(chosen_matrices[i])))
     ax.legend()
     plt.show()
