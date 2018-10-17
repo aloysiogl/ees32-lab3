@@ -14,6 +14,7 @@ from matrix_codifiers.DecoderHamming import DecoderHamming
 from matrix_codifiers.EncoderHamming import EncoderHamming
 from preprocessing.MatrixReader import MatrixReader
 from preprocessing.poly_generator import octal2poly
+from preprocessing.TransitionAnalyser import TransitionAnalyser
 from polynomial_codifiers.PolyEncoder import PolyEncoder
 from polynomial_codifiers.PolyDecoder import PolyDecoder
 from convolutional_codifiers.ConvEncoder import ConvEncoder
@@ -32,6 +33,7 @@ chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3)]
 plot_normal = True
 plot_hamming = False
 plot_cyclic = False
+plot_conv = True
 
 # Reading matrices
 reader = MatrixReader()
@@ -106,9 +108,10 @@ def convolutional_process(table, codes, channels):
     outputs = [None] * len(channels)
 
     for c in range(len(channels)):
-        outputs[c] = channels[c].add_noise(np.array(codes))
+        outputs[c] = channels[c].add_noise(np.array(encode))
 
-    # TODO: implement
+    # Decoding
+    print("Decodind not implemented")
 
     return outputs
 
@@ -130,13 +133,18 @@ if __name__ == "__main__":
         hamming_outputs = hamming_process(codes, channels)
     if plot_cyclic:
         cyclic_outputs = [cyclic_process(i, codes, channels) for i in chosen_matrices]
+    if plot_conv:
+        # Generating chosen matrices for convolutional output
+        graph_matrices = []
+        for tup in chosen_polynomials:
+            polynomials = [octal2poly(pol, tup[1]) for pol in tup[0]]
+            analyser = TransitionAnalyser(polynomials)
+            graph_matrices.append(analyser.table_generate(tup[1]))
 
-    # Generating chosen matrices for convolutional output
+        # Generating convolutional outputs
+        convolutional_outputs = [convolutional_process(matrix, codes, channels) for matrix in graph_matrices]
 
-    #TODO: implement
-
-    # generating convolutional outputs
-    # convolutional_outputs = [convolutional_process(ma)]
+        #TODO finish plotting after implement decoding
 
     # Comparing outputs and plotting a graph
     normal_ps = []
