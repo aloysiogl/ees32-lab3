@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-import six,sys
+import six, sys
+
 # needed for utf-encoding on python 2:
 if six.PY2:
     reload(sys)
@@ -8,19 +9,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 
-
 from Channel import Channel
 from matrix_codifiers.DecoderHamming import DecoderHamming
 from matrix_codifiers.EncoderHamming import EncoderHamming
 from preprocessing.MatrixReader import MatrixReader
+from preprocessing.poly_generator import octal2poly
 from polynomial_codifiers.PolyEncoder import PolyEncoder
 from polynomial_codifiers.PolyDecoder import PolyDecoder
+from convolutional_codifiers.ConvEncoder import ConvEncoder
 
 # Script which generates N random bits and simulates a random channel with probabilities ranging from 0.5 to 10e-6.
 # It then plots a graph comparing different encoding processes.
 N = 1000
 
 chosen_matrices = [5]
+chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3)]
 
 # Reading matrices
 reader = MatrixReader()
@@ -39,8 +42,8 @@ def normal_process(codes, channels):
 def hamming_process(codes, channels):
     # Encoding
     hamming_codes = []
-    for c in range(len(codes)//4):
-        hamming_codes.append(np.array(codes[c*4:c*4+4]))
+    for c in range(len(codes) // 4):
+        hamming_codes.append(np.array(codes[c * 4:c * 4 + 4]))
 
     hamming_encoder = EncoderHamming()
     encodes = [hamming_encoder.encode(code) for code in hamming_codes]
@@ -63,10 +66,10 @@ def cyclic_process(index, codes, channels):
     # Encoding
     cyclic_codes = []
     gen = np.flip(np.array(reader.get_matrix(index)[0]))
-    n = len(gen)-PolyDecoder.degree(gen)+1
+    n = len(gen) - PolyDecoder.degree(gen) + 1
     poly_encoder = PolyEncoder(gen)
-    for c in range(len(codes)//n):
-        cyclic_codes.append(np.array(codes[c*n:c*n+n]))
+    for c in range(len(codes) // n):
+        cyclic_codes.append(np.array(codes[c * n:c * n + n]))
 
     encodes = [poly_encoder.encode(code) for code in cyclic_codes]
 
@@ -86,6 +89,22 @@ def cyclic_process(index, codes, channels):
     return outputs
 
 
+def convolutional_process(table, codes, channels):
+    # Encoding
+    conv_encoder = ConvEncoder(table)
+    encode = conv_encoder.encode(codes)
+
+    # Channeling
+    outputs = [None] * len(channels)
+
+    for c in range(len(channels)):
+        outputs[c] = channels[c].add_noise(np.array(codes))
+
+    # TODO: implement
+
+    return outputs
+
+
 if __name__ == "__main__":
     t = time.time()
 
@@ -101,15 +120,21 @@ if __name__ == "__main__":
     # hamming_outputs = hamming_process(codes, channels)
     cyclic_outputs = [cyclic_process(i, codes, channels) for i in chosen_matrices]
 
+    # Generating chosen matrices for convolutional output
+    #TODO: implement
+
+    # generating convolutional outputs
+    convolutional_outputs = [convolutional_process(ma)]
+
     # Comparing outputs and plotting a graph
     normal_ps = []
     hamming_ps = []
     cyclic_ps = [[] for p in range(len(cyclic_outputs))]
     for c in range(len(channels)):
-        normal_ps.append(1 - np.count_nonzero(normal_outputs[c] == codes)/N)
+        normal_ps.append(1 - np.count_nonzero(normal_outputs[c] == codes) / N)
         # hamming_ps.append(1 - np.count_nonzero(hamming_outputs[c] == codes)/N)
         for i in range(len(cyclic_outputs)):
-            cyclic_ps[i].append((1 - np.count_nonzero(cyclic_outputs[i][c] == codes)/N))
+            cyclic_ps[i].append((1 - np.count_nonzero(cyclic_outputs[i][c] == codes) / N))
     normal_ps = np.log(normal_ps) / np.log(10)
     # hamming_ps = np.log(hamming_ps) / np.log(10)
     for i in range(len(cyclic_ps)):
