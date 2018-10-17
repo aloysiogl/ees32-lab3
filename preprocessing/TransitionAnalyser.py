@@ -30,9 +30,17 @@ class TransitionAnalyser:
             outputs.append(np.mod(np.dot(partial_curr, pol), 2))
 
         # Generating next state
-        next = (curr_state << 1 + inp) % (2**(self.m-1))
+        next = ((curr_state << 1) + inp) % (2**(self.m-1))
 
         return outputs, next
+
+    def table_generate(self, states):
+        table = []
+        for i in range(2**states):
+            transition0 = self.transition(i, 0)
+            transition1 = self.transition(i, 1)
+            table.append([transition0, transition1])
+        return table
 
 
 if __name__ == "__main__":
@@ -41,3 +49,5 @@ if __name__ == "__main__":
     polarr = [p1, p2]
     gen = TransitionAnalyser(polarr)
     gen.transition(0b111111, 1)
+    for ele in gen.table_generate(6):
+        print(ele)
