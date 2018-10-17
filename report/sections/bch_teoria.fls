@@ -1,0 +1,7 @@
+PWD /media/vitor/000F8EFA0002DB72/ITA/ELE32/lab2/report/sections
+INPUT /etc/texmf/web2c/texmf.cnf
+INPUT /usr/share/texmf/web2c/texmf.cnf
+INPUT /usr/share/texlive/texmf-dist/web2c/texmf.cnf
+INPUT /var/lib/texmf/web2c/pdftex/pdflatex.fmt
+INPUT /media/vitor/000F8EFA0002DB72/ITA/ELE32/lab2/report/sections/bch_teoria.tex
+OUTPUT /media/vitor/000F8EFA0002DB72/ITA/ELE32/lab2/report/sections/bch_teoria.log
