@@ -14,24 +14,32 @@ class ConvDecoder:
     def decode(self, message):
         # Splitting message
         split_message = []
-        for i in range(len(message)//self.chunk_size):
-            split_message.append(message[i*self.chunk_size:self.chunk_size*(i+1)])
+        for j in range(len(message) // self.chunk_size):
+            split_message.append(message[j * self.chunk_size:self.chunk_size * (j + 1)])
 
         # Decoding
         paths = [[] for i in range(len(self.table))]
         weigths = [-1 for i in range(len(self.table))]
         weigths[0] = 0
 
-        ######
+        for chunk in split_message:
+            current_paths = [[] for i in range(len(self.table))]
+            current_weigths = [-1 for i in range(len(self.table))]
+            for j in range(len(weigths)):
+                if weigths[j] < 0:
+                    continue
 
-        ######
+                for k in range(2):
+                    transition_weigth = self.distance_transition(j, k, chunk)
+                    final = self.table[j][k][1]
+                    if current_weigths[final] == -1 or current_weigths[final] > transition_weigth:
+                        current_weigths[final] = transition_weigth
+                        current_paths[final] = paths[j] + [k]
+            paths = current_paths
+            weigths = current_weigths
 
-        #####
-        #Heladio
         x = weigths.index(min(weigths))
         return paths[x]
-        #####
-
 
     def distance_transition(self, initial, trans, seq):
         output, new = self.table[initial][trans]
@@ -49,7 +57,7 @@ if __name__ == '__main__':
     gen = ta.TransitionAnalyser(polarr)
 
     codifier = ConvEncoder(gen.table_generate(3))
-    u = [0, 0, 1, 0]
+    u = [1, 1, 1, 0, 0, 1, 0, 0, 1]
     print(codifier.encode(u))
     for i in gen.table_generate(3):
         print(i)
