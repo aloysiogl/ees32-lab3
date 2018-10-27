@@ -28,6 +28,8 @@ class ConvDecoder:
 
         #####
         #Heladio
+        x = weigths.index(min(weigths))
+        return paths[x]
         #####
 
 
@@ -53,4 +55,4 @@ if __name__ == '__main__':
         print(i)
 
     decoder = ConvDecoder(gen.table_generate(3))
-    decoder.decode(codifier.encode(u))
+    print(decoder.decode(codifier.encode(u)))
