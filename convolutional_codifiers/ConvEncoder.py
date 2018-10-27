@@ -26,4 +26,6 @@ if __name__ == '__main__':
 
     codifier = ConvEncoder(gen.table_generate(3))
     u = [0, 0, 0, 0]
-    print(codifier.encode(u))
+    # print(codifier.encode(u))
+    for i in gen.table_generate(3):
+        print(i)
