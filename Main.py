@@ -22,13 +22,15 @@ from convolutional_codifiers.ConvDecoder import ConvDecoder
 
 # Script which generates N random bits and simulates a random channel with probabilities ranging from 0.5 to 10e-6.
 # It then plots a graph comparing different encoding processes.
-N = 100000
+N = 100
 
 # Definition for polynomial codifier
 chosen_matrices = [5]
 
 # Definition for convolutional codifier
-chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3)]
+chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3),
+                      ([[2, 5], [3, 3], [3, 7]], 4),
+                      ([[1, 1, 7], [1, 2, 7], [1, 5, 5]], 6)]
 
 # Plotting types
 plot_normal = True
@@ -109,7 +111,7 @@ def convolutional_process(table, codes, channels):
     outputs = [None] * len(channels)
 
     for c in range(len(channels)):
-        outputs[c] = channels[c].add_noise(np.array(encode))
+        outputs[c] = np.array(channels[c].add_noise(np.array(encode, dtype=int)), dtype=int)
 
     # Decoding
     conv_decoder = ConvDecoder(table)
@@ -164,6 +166,7 @@ if __name__ == "__main__":
                 cyclic_ps[i].append((1 - np.count_nonzero(cyclic_outputs[i][c] == codes) / N))
         if plot_conv:
             for i in range(len(convolutional_outputs)):
+                assert len(convolutional_outputs[i][c]) == len(codes)
                 convolutional_ps[i].append((1 - np.count_nonzero(convolutional_outputs[i][c] == codes) / N))
     if plot_normal:
         normal_ps = np.log(normal_ps) / np.log(10)
@@ -193,6 +196,6 @@ if __name__ == "__main__":
     if plot_conv:
         plt_conv = []
         for i in range(len(convolutional_ps)):
-            plt_conv.append(plt.plot(ps, convolutional_ps[i], label="teste"))
+            plt_conv.append(plt.plot(ps, convolutional_ps[i], label="Polinomio " + str(i)))
     ax.legend()
     plt.show()

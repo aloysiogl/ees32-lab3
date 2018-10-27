@@ -56,10 +56,11 @@ if __name__ == '__main__':
     gen = ta.TransitionAnalyser(polarr)
 
     codifier = ConvEncoder(gen.table_generate(3))
-    u = [1, 1, 1, 0, 0, 1, 0, 0, 1]
+    u = [1, 1, 1]
     print(codifier.encode(u))
     for i in gen.table_generate(3):
         print(i)
 
     decoder = ConvDecoder(gen.table_generate(3))
-    print(decoder.decode(codifier.encode(u)))
+    print(decoder.decode(np.mod(np.array(codifier.encode(u))+
+                                np.array([0, 0, 0, 0, 0, 0, 1, 0, 0]),2)))
