@@ -19,26 +19,25 @@ class ConvDecoder:
 
         # Decoding
         paths = [[] for i in range(len(self.table))]
-        weigths = [-1 for i in range(len(self.table))]
-        weigths[0] = 0
+        weights = [-1 for i in range(len(self.table))]
+        weights[0] = 0
 
         for chunk in split_message:
             current_paths = [[] for i in range(len(self.table))]
-            current_weigths = [-1 for i in range(len(self.table))]
-            for j in range(len(weigths)):
-                if weigths[j] < 0:
+            current_weights = [-1 for i in range(len(self.table))]
+            for j in range(len(weights)):
+                if weights[j] < 0:
                     continue
-
                 for k in range(2):
                     transition_weigth = self.distance_transition(j, k, chunk)
                     final = self.table[j][k][1]
-                    if current_weigths[final] == -1 or current_weigths[final] > transition_weigth:
-                        current_weigths[final] = transition_weigth
+                    if current_weights[final] == -1 or current_weights[final] > transition_weigth:
+                        current_weights[final] = transition_weigth + weights[j]
                         current_paths[final] = paths[j] + [k]
             paths = current_paths
-            weigths = current_weigths
+            weights = current_weights
 
-        x = weigths.index(min(weigths))
+        x = weights.index(min(weights))
         return paths[x]
 
     def distance_transition(self, initial, trans, seq):

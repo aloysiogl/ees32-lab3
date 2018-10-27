@@ -18,10 +18,11 @@ from preprocessing.TransitionAnalyser import TransitionAnalyser
 from polynomial_codifiers.PolyEncoder import PolyEncoder
 from polynomial_codifiers.PolyDecoder import PolyDecoder
 from convolutional_codifiers.ConvEncoder import ConvEncoder
+from convolutional_codifiers.ConvDecoder import ConvDecoder
 
 # Script which generates N random bits and simulates a random channel with probabilities ranging from 0.5 to 10e-6.
 # It then plots a graph comparing different encoding processes.
-N = 1000
+N = 100000
 
 # Definition for polynomial codifier
 chosen_matrices = [5]
@@ -111,7 +112,9 @@ def convolutional_process(table, codes, channels):
         outputs[c] = channels[c].add_noise(np.array(encode))
 
     # Decoding
-    print("Decodind not implemented")
+    conv_decoder = ConvDecoder(table)
+    for c in range(len(channels)):
+        outputs[c] = np.array(conv_decoder.decode(outputs[c]))
 
     return outputs
 
@@ -144,13 +147,13 @@ if __name__ == "__main__":
         # Generating convolutional outputs
         convolutional_outputs = [convolutional_process(matrix, codes, channels) for matrix in graph_matrices]
 
-        #TODO finish plotting after implement decoding
-
     # Comparing outputs and plotting a graph
     normal_ps = []
     hamming_ps = []
     if plot_cyclic:
         cyclic_ps = [[] for p in range(len(cyclic_outputs))]
+    if plot_conv:
+        convolutional_ps = [[] for p in range(len(convolutional_outputs))]
     for c in range(len(channels)):
         if plot_normal:
             normal_ps.append(1 - np.count_nonzero(normal_outputs[c] == codes) / N)
@@ -159,6 +162,9 @@ if __name__ == "__main__":
         if plot_cyclic:
             for i in range(len(cyclic_outputs)):
                 cyclic_ps[i].append((1 - np.count_nonzero(cyclic_outputs[i][c] == codes) / N))
+        if plot_conv:
+            for i in range(len(convolutional_outputs)):
+                convolutional_ps[i].append((1 - np.count_nonzero(convolutional_outputs[i][c] == codes) / N))
     if plot_normal:
         normal_ps = np.log(normal_ps) / np.log(10)
     if plot_hamming:
@@ -166,6 +172,9 @@ if __name__ == "__main__":
     if plot_cyclic:
         for i in range(len(cyclic_ps)):
             cyclic_ps[i] = np.log(cyclic_ps[i]) / np.log(10)
+    if plot_conv:
+        for i in range(len(convolutional_ps)):
+            convolutional_ps[i] = np.log(convolutional_ps[i]) / np.log(10)
     ps = np.log(ps) / np.log(10)
 
     print("Time taken:", time.time() - t, "s")
@@ -181,5 +190,9 @@ if __name__ == "__main__":
         plt_cycl = []
         for i in range(len(cyclic_ps)):
             plt_cycl.append(plt.plot(ps, cyclic_ps[i], label=reader.get_name(chosen_matrices[i])))
+    if plot_conv:
+        plt_conv = []
+        for i in range(len(convolutional_ps)):
+            plt_conv.append(plt.plot(ps, convolutional_ps[i], label="teste"))
     ax.legend()
     plt.show()
