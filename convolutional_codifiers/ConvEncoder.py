@@ -25,7 +25,10 @@ if __name__ == '__main__':
     gen = ta.TransitionAnalyser(polarr)
 
     codifier = ConvEncoder(gen.table_generate(3))
-    u = [0, 0, 0, 0]
-    # print(codifier.encode(u))
+    u = [0, 1, 1, 0, 1, 1]
+    print(codifier.encode(u))
+
+    print('  |        0       |      1        ')
+    print('--|----------------|---------------')
     for i in gen.table_generate(3):
-        print(i)
+        print(gen.table_generate(3).index(i), '|', i[0], '|', i[1])
