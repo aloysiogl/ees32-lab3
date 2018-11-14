@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import six, sys
 
-# needed for utf-encoding on python 2:
-if six.PY2:
-    reload(sys)
-    sys.setdefaultencoding('utf8')
+# # needed for utf-encoding on python 2:
+# if six.PY2:
+#     reload(sys)
+#     sys.setdefaultencoding('utf8')
 import matplotlib.pyplot as plt
 import numpy as np
 import time
@@ -36,16 +36,17 @@ chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3),
 
 # Plotting types
 plot_normal = True
-plot_hamming = False
+plot_hamming = True
 plot_cyclic = False
-plot_conv = False
+plot_conv = True
 
 # Reading matrices
 reader = MatrixReader()
 reader.read()
 
 
-def normal_process(codes, channels):
+def normal_process(codes, ei_n0):
+    channels = [Channel(p) for p in p_map(ei_n0, 1)]
     outputs = [None] * len(channels)
 
     for c in range(len(channels)):
@@ -54,7 +55,7 @@ def normal_process(codes, channels):
     return outputs
 
 
-def hamming_process(codes, channels):
+def hamming_process(codes, ei_n0):
     # Encoding
     hamming_codes = []
     for c in range(len(codes) // 4):
@@ -64,6 +65,7 @@ def hamming_process(codes, channels):
     encodes = [hamming_encoder.encode(code) for code in hamming_codes]
 
     # Channeling
+    channels = [Channel(p) for p in p_map(ei_n0, 4/7)]
     outputs = [None] * len(channels)
     for c in range(len(channels)):
         outputs[c] = np.array([channels[c].add_noise(code) for code in encodes])
@@ -78,6 +80,7 @@ def hamming_process(codes, channels):
 
 
 def cyclic_process(index, codes, channels):
+    # TODO: fix cyclic
     # Encoding
     cyclic_codes = []
     gen = np.flip(np.array(reader.get_matrix(index)[0]))
@@ -104,10 +107,11 @@ def cyclic_process(index, codes, channels):
     return outputs
 
 
-def convolutional_process(table, codes, channels):
+def convolutional_process(table, codes, ei_n0):
     # Encoding
     conv_encoder = ConvEncoder(table)
     encode = conv_encoder.encode(codes)
+    channels = [Channel(p) for p in p_map(ei_n0, 1/len(table[0][0][0]))]
 
     # Channeling
     outputs = [None] * len(channels)
@@ -129,7 +133,7 @@ def convolutional_process(table, codes, channels):
 def p_map(eb_n0s, ratio):
     ps = []
     for eb_n0 in eb_n0s:
-        ps.append(1 - norm.cdf(sqrt(2 * eb_n0 / ratio)))
+        ps.append(1 - norm.cdf(sqrt(2 * eb_n0 * ratio)))
     return ps
 
 
@@ -140,19 +144,19 @@ if __name__ == "__main__":
     codes = np.rint(np.random.random_sample(N)).astype(bool)
 
     # Generating channels with different noises to plot a graph
-    ei_n0 = [0, 0.35416315, 0.82118721, 1.35277173, 2.10894229, 2.70594722,
+    ei_n0 = [0.1, 0.35416315, 0.82118721, 1.35277173, 2.10894229, 2.70594722,
              3.3174483, 4.1419075, 4.77476785, 5.41378309, 6.26609665, 6.91554181,
              7.56835261, 8.43569456, 9.09464674, 9.75571048, 10.63242365]
-
-    channels = [Channel(p) for p in p_map(ei_n0, 1)]
+    # ei_n0 = [0.1, 0.35416315, 0.82118721, 1.35277173, 2.10894229, 2.5]
+    # ei_n0 = [i/10 for i in range(100)]
 
     # Generating outputs without encoding, with hamming encoding and with our encoding
     if plot_normal:
-        normal_outputs = normal_process(codes, channels)
+        normal_outputs = normal_process(codes, ei_n0)
     if plot_hamming:
-        hamming_outputs = hamming_process(codes, channels)
+        hamming_outputs = hamming_process(codes, ei_n0)
     if plot_cyclic:
-        cyclic_outputs = [cyclic_process(i, codes, channels) for i in chosen_matrices]
+        cyclic_outputs = [cyclic_process(i, codes, ei_n0) for i in chosen_matrices]
     if plot_conv:
         # Generating chosen matrices for convolutional output
         graph_matrices = []
@@ -166,7 +170,7 @@ if __name__ == "__main__":
         convolutional_outputs = []
         for matrix in graph_matrices:
             print('PROCESSO: {}/{}'.format(iteracao, 3))
-            convolutional_outputs.append(convolutional_process(matrix, codes, channels))
+            convolutional_outputs.append(convolutional_process(matrix, codes, ei_n0))
             iteracao += 1
         # convolutional_outputs = [convolutional_process(matrix, codes, channels) for matrix in graph_matrices]
 
@@ -177,7 +181,7 @@ if __name__ == "__main__":
         cyclic_ps = [[] for p in range(len(cyclic_outputs))]
     if plot_conv:
         convolutional_ps = [[] for p in range(len(convolutional_outputs))]
-    for c in range(len(channels)):
+    for c in range(len(ei_n0)):
         if plot_normal:
             normal_ps.append(1 - np.count_nonzero(normal_outputs[c] == codes) / N)
         if plot_hamming:
@@ -189,10 +193,11 @@ if __name__ == "__main__":
             for i in range(len(convolutional_outputs)):
                 assert len(convolutional_outputs[i][c]) == len(codes)
                 convolutional_ps[i].append((1 - np.count_nonzero(convolutional_outputs[i][c] == codes) / N))
-
+    ei_n0 = 10*np.log(ei_n0) / np.log(10)
     if plot_normal:
         normal_ps = np.log(normal_ps) / np.log(10)
     if plot_hamming:
+        print(hamming_ps)
         hamming_ps = np.log(hamming_ps) / np.log(10)
     if plot_cyclic:
         for i in range(len(cyclic_ps)):
@@ -203,12 +208,14 @@ if __name__ == "__main__":
 
     print("Time taken:", time.time() - t, "s")
     fig, ax = plt.subplots()
-    plt.xlim([0, 10])
-    plt.xlabel("EI/N0")
-    plt.ylabel("log(Probabilidade de erro de bit)")
+    plt.xlim([0, 11])
+    plt.xlabel("EI/N0 (db)")
+    plt.ylabel("probabilidade de erro de bit")
     if plot_normal:
+        print(normal_ps)
         plt1 = plt.plot(ei_n0, normal_ps, label="Não codificado")
     if plot_hamming:
+        print(hamming_ps)
         plt2 = plt.plot(ei_n0, hamming_ps, label="Hamming")
     if plot_cyclic:
         plt_cycl = []
@@ -217,6 +224,7 @@ if __name__ == "__main__":
     if plot_conv:
         plt_conv = []
         for i in range(len(convolutional_ps)):
+            print(convolutional_ps[i])
             plt_conv.append(plt.plot(ei_n0, convolutional_ps[i], label="Polinomio " + str(i)))
     ax.legend()
     plt.show()

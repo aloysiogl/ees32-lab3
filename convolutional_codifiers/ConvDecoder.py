@@ -32,7 +32,7 @@ class ConvDecoder:
                 if weights[j] < 0:
                     continue
                 for k in range(2):
-                    transition_weigth = self.exact_probability(j, k, chunk)
+                    transition_weigth = self.hamming_distance(j, k, chunk)
                     final = self.table[j][k][1]
                     if current_weights[final] == -1 or current_weights[final] > transition_weigth + weights[j]:
                         current_weights[final] = transition_weigth + weights[j]
