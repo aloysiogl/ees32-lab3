@@ -1,15 +1,18 @@
 import numpy as np
 import preprocessing.TransitionAnalyser as ta
+from math import log
 from convolutional_codifiers.ConvEncoder import ConvEncoder
 
 
 class ConvDecoder:
-    def __init__(self, table):
+    def __init__(self, table, prob):
         self.table = table
 
         assert len(table) > 0
 
         self.chunk_size = len(table[0][0][0])
+
+        self.p = prob
 
     def decode(self, message):
         # Splitting message
@@ -29,7 +32,7 @@ class ConvDecoder:
                 if weights[j] < 0:
                     continue
                 for k in range(2):
-                    transition_weigth = self.distance_transition(j, k, chunk)
+                    transition_weigth = self.exact_probability(j, k, chunk)
                     final = self.table[j][k][1]
                     if current_weights[final] == -1 or current_weights[final] > transition_weigth + weights[j]:
                         current_weights[final] = transition_weigth + weights[j]
@@ -40,11 +43,23 @@ class ConvDecoder:
         x = weights.index(min(weights))
         return paths[x]
 
-    def distance_transition(self, initial, trans, seq):
+    def hamming_distance(self, initial, trans, seq):
         output, new = self.table[initial][trans]
         cost = 0
         for i in range(self.chunk_size):
             cost += (output[i] + seq[i]) % 2
+        return cost
+
+    def exact_probability(self, initial, trans, seq):
+        hamming = self.hamming_distance(initial, trans, seq)
+        cost = hamming*log(self.p, 10) + (self.chunk_size - hamming)*log(1 - self.p, 10)
+        return -cost
+
+    def euclidean_distance(self, initial, trans, seq):
+        output, new = self.table[initial][trans]
+        cost = 0
+        for i in range(self.chunk_size):
+            cost += (output[i] - seq[i])**2
         return cost
 
 
@@ -59,7 +74,7 @@ if __name__ == '__main__':
     u = [0, 1, 1, 0]
     print('Encode =', codifier.encode(u))
 
-    decoder = ConvDecoder(gen.table_generate(3))
+    decoder = ConvDecoder(gen.table_generate(3), 0.2)
     msg = np.mod(np.array(codifier.encode(u)) + np.array([0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0]), 2)
     print('Sent   =', msg)
     print('Decode =', np.array(decoder.decode(msg)))
