@@ -144,7 +144,7 @@ if __name__ == "__main__":
              3.3174483, 4.1419075, 4.77476785, 5.41378309, 6.26609665, 6.91554181,
              7.56835261, 8.43569456, 9.09464674, 9.75571048, 10.63242365]
 
-    channels = [Channel(p) for p in ei_n0]
+    channels = [Channel(p) for p in p_map(ei_n0, 1)]
 
     # Generating outputs without encoding, with hamming encoding and with our encoding
     if plot_normal:
@@ -200,12 +200,11 @@ if __name__ == "__main__":
     if plot_conv:
         for i in range(len(convolutional_ps)):
             convolutional_ps[i] = np.log(convolutional_ps[i]) / np.log(10)
-    ei_n0 = np.log(ei_n0) / np.log(10)
 
     print("Time taken:", time.time() - t, "s")
     fig, ax = plt.subplots()
-    plt.xlim([0, -6])
-    plt.xlabel("log(p)")
+    plt.xlim([0, 10])
+    plt.xlabel("EI/N0")
     plt.ylabel("log(Probabilidade de erro de bit)")
     if plot_normal:
         plt1 = plt.plot(ei_n0, normal_ps, label="Não codificado")
