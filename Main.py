@@ -140,10 +140,10 @@ if __name__ == "__main__":
     codes = np.rint(np.random.random_sample(N)).astype(bool)
 
     # Generating channels with different noises to plot a graph
-    ei_n0 = [0, 0.35416315,  0.82118721,  1.35277173, 2.10894229,  2.70594722,
-             3.3174483,   4.1419075,   4.77476785,  5.41378309,  6.26609665,  6.91554181,
-             7.56835261,  8.43569456,  9.09464674,  9.75571048, 10.63242365]
-    
+    ei_n0 = [0, 0.35416315, 0.82118721, 1.35277173, 2.10894229, 2.70594722,
+             3.3174483, 4.1419075, 4.77476785, 5.41378309, 6.26609665, 6.91554181,
+             7.56835261, 8.43569456, 9.09464674, 9.75571048, 10.63242365]
+
     channels = [Channel(p) for p in ei_n0]
 
     # Generating outputs without encoding, with hamming encoding and with our encoding
@@ -154,21 +154,21 @@ if __name__ == "__main__":
     if plot_cyclic:
         cyclic_outputs = [cyclic_process(i, codes, channels) for i in chosen_matrices]
     if plot_conv:
-    # Generating chosen matrices for convolutional output
+        # Generating chosen matrices for convolutional output
         graph_matrices = []
-    for tup in chosen_polynomials:
-        polynomials = [octal2poly(pol, tup[1]) for pol in tup[0]]
-    analyser = TransitionAnalyser(polynomials)
-    graph_matrices.append(analyser.table_generate(tup[1]))
+        for tup in chosen_polynomials:
+            polynomials = [octal2poly(pol, tup[1]) for pol in tup[0]]
+            analyser = TransitionAnalyser(polynomials)
+            graph_matrices.append(analyser.table_generate(tup[1]))
 
-    # Generating convolutional outputs
-    iteracao = 1
-    convolutional_outputs = []
-    for matrix in graph_matrices:
-        print('PROCESSO: {}/{}'.format(iteracao, 3))
-    convolutional_outputs.append(convolutional_process(matrix, codes, channels))
-    iteracao += 1
-    # convolutional_outputs = [convolutional_process(matrix, codes, channels) for matrix in graph_matrices]
+        # Generating convolutional outputs
+        iteracao = 1
+        convolutional_outputs = []
+        for matrix in graph_matrices:
+            print('PROCESSO: {}/{}'.format(iteracao, 3))
+            convolutional_outputs.append(convolutional_process(matrix, codes, channels))
+            iteracao += 1
+        # convolutional_outputs = [convolutional_process(matrix, codes, channels) for matrix in graph_matrices]
 
     # Comparing outputs and plotting a graph
     normal_ps = []
@@ -178,33 +178,28 @@ if __name__ == "__main__":
     if plot_conv:
         convolutional_ps = [[] for p in range(len(convolutional_outputs))]
     for c in range(len(channels)):
-        if
-    plot_normal:
-    normal_ps.append(1 - np.count_nonzero(normal_outputs[c] == codes) / N)
-    if plot_hamming:
-        hamming_ps.append(1 - np.count_nonzero(hamming_outputs[c] == codes) / N)
-    if plot_cyclic:
-        for
-    i in range(len(cyclic_outputs)):
-    cyclic_ps[i].append((1 - np.count_nonzero(cyclic_outputs[i][c] == codes) / N))
-    if plot_conv:
-        for
-    i in range(len(convolutional_outputs)):
-    assert len(convolutional_outputs[i][c]) == len(codes)
-    convolutional_ps[i].append((1 - np.count_nonzero(convolutional_outputs[i][c] == codes) / N))
+        if plot_normal:
+            normal_ps.append(1 - np.count_nonzero(normal_outputs[c] == codes) / N)
+        if plot_hamming:
+            hamming_ps.append(1 - np.count_nonzero(hamming_outputs[c] == codes) / N)
+        if plot_cyclic:
+            for i in range(len(cyclic_outputs)):
+                cyclic_ps[i].append((1 - np.count_nonzero(cyclic_outputs[i][c] == codes) / N))
+        if plot_conv:
+            for i in range(len(convolutional_outputs)):
+                assert len(convolutional_outputs[i][c]) == len(codes)
+                convolutional_ps[i].append((1 - np.count_nonzero(convolutional_outputs[i][c] == codes) / N))
 
     if plot_normal:
         normal_ps = np.log(normal_ps) / np.log(10)
     if plot_hamming:
         hamming_ps = np.log(hamming_ps) / np.log(10)
     if plot_cyclic:
-        for
-    i in range(len(cyclic_ps)):
-    cyclic_ps[i] = np.log(cyclic_ps[i]) / np.log(10)
+        for i in range(len(cyclic_ps)):
+            cyclic_ps[i] = np.log(cyclic_ps[i]) / np.log(10)
     if plot_conv:
-        for
-    i in range(len(convolutional_ps)):
-    convolutional_ps[i] = np.log(convolutional_ps[i]) / np.log(10)
+        for i in range(len(convolutional_ps)):
+            convolutional_ps[i] = np.log(convolutional_ps[i]) / np.log(10)
     ei_n0 = np.log(ei_n0) / np.log(10)
 
     print("Time taken:", time.time() - t, "s")
@@ -218,11 +213,11 @@ if __name__ == "__main__":
         plt2 = plt.plot(ei_n0, hamming_ps, label="Hamming")
     if plot_cyclic:
         plt_cycl = []
-    for i in range(len(cyclic_ps)):
-        plt_cycl.append(plt.plot(ei_n0, cyclic_ps[i], label=reader.get_name(chosen_matrices[i])))
+        for i in range(len(cyclic_ps)):
+            plt_cycl.append(plt.plot(ei_n0, cyclic_ps[i], label=reader.get_name(chosen_matrices[i])))
     if plot_conv:
         plt_conv = []
-    for i in range(len(convolutional_ps)):
-        plt_conv.append(plt.plot(ei_n0, convolutional_ps[i], label="Polinomio " + str(i)))
+        for i in range(len(convolutional_ps)):
+            plt_conv.append(plt.plot(ei_n0, convolutional_ps[i], label="Polinomio " + str(i)))
     ax.legend()
     plt.show()
