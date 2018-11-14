@@ -37,7 +37,7 @@ chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3),
 # Plotting types
 plot_normal = True
 plot_hamming = True
-plot_cyclic = False
+plot_cyclic = True
 plot_conv = True
 
 # Reading matrices
@@ -79,8 +79,7 @@ def hamming_process(codes, ei_n0):
     return outputs
 
 
-def cyclic_process(index, codes, channels):
-    # TODO: fix cyclic
+def cyclic_process(index, codes, ei_n0):
     # Encoding
     cyclic_codes = []
     gen = np.flip(np.array(reader.get_matrix(index)[0]))
@@ -92,6 +91,8 @@ def cyclic_process(index, codes, channels):
     encodes = [poly_encoder.encode(code) for code in cyclic_codes]
 
     # Channeling
+    shape = np.shape(reader.get_matrix(index))
+    channels = [Channel(p) for p in p_map(ei_n0, shape[0] / shape[1])]
     outputs = [None] * len(channels)
     for c in range(len(channels)):
         outputs[c] = np.array([channels[c].add_noise(code) for code in encodes])
@@ -197,7 +198,6 @@ if __name__ == "__main__":
     if plot_normal:
         normal_ps = np.log(normal_ps) / np.log(10)
     if plot_hamming:
-        print(hamming_ps)
         hamming_ps = np.log(hamming_ps) / np.log(10)
     if plot_cyclic:
         for i in range(len(cyclic_ps)):
@@ -212,10 +212,8 @@ if __name__ == "__main__":
     plt.xlabel("EI/N0 (db)")
     plt.ylabel("probabilidade de erro de bit")
     if plot_normal:
-        print(normal_ps)
         plt1 = plt.plot(ei_n0, normal_ps, label="Não codificado")
     if plot_hamming:
-        print(hamming_ps)
         plt2 = plt.plot(ei_n0, hamming_ps, label="Hamming")
     if plot_cyclic:
         plt_cycl = []
@@ -224,7 +222,6 @@ if __name__ == "__main__":
     if plot_conv:
         plt_conv = []
         for i in range(len(convolutional_ps)):
-            print(convolutional_ps[i])
             plt_conv.append(plt.plot(ei_n0, convolutional_ps[i], label="Polinomio " + str(i)))
     ax.legend()
     plt.show()
