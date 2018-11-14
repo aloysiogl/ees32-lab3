@@ -1,4 +1,5 @@
 import numpy as np
+from preprocessing.poly_generator import dec2bi
 
 
 class TransitionAnalyser:
@@ -14,11 +15,7 @@ class TransitionAnalyser:
         curr_state = curr
 
         # Reading current state
-        curr_array = []
-        for i in range(self.m-1):
-            curr_array.append(curr % 2)
-            curr = curr//2
-        curr_array = list(reversed(curr_array))
+        curr_array = dec2bi(curr_state, self.m-1)
 
         outputs = []
 
