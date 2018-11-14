@@ -31,7 +31,7 @@ class ConvDecoder:
                 for k in range(2):
                     transition_weigth = self.distance_transition(j, k, chunk)
                     final = self.table[j][k][1]
-                    if current_weights[final] == -1 or current_weights[final] > transition_weigth:
+                    if current_weights[final] == -1 or current_weights[final] > transition_weigth + weights[j]:
                         current_weights[final] = transition_weigth + weights[j]
                         current_paths[final] = paths[j] + [k]
             paths = current_paths
