@@ -22,7 +22,7 @@ from convolutional_codifiers.ConvDecoder import ConvDecoder
 
 # Script which generates N random bits and simulates a random channel with probabilities ranging from 0.5 to 10e-6.
 # It then plots a graph comparing different encoding processes.
-N = 10000
+N = 1000
 
 # Definition for polynomial codifier
 chosen_matrices = [5]
@@ -114,11 +114,11 @@ def convolutional_process(table, codes, channels):
         outputs[c] = np.array(channels[c].add_noise(np.array(encode, dtype=int)), dtype=int)
 
     # Decoding
-    conv_decoder = ConvDecoder(table)
     alpha = 1
     for c in range(len(channels)):
         print('Iteracao {:02}/{}'.format(alpha, len(channels)))
         alpha += 1
+        conv_decoder = ConvDecoder(table, channels[c].get_p())
         outputs[c] = np.array(conv_decoder.decode(outputs[c]))
 
     return outputs
