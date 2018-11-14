@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 
+from scipy.stats import norm
+from math import sqrt
 from Channel import Channel
 from matrix_codifiers.DecoderHamming import DecoderHamming
 from matrix_codifiers.EncoderHamming import EncoderHamming
@@ -22,7 +24,7 @@ from convolutional_codifiers.ConvDecoder import ConvDecoder
 
 # Script which generates N random bits and simulates a random channel with probabilities ranging from 0.5 to 10e-6.
 # It then plots a graph comparing different encoding processes.
-N = 100
+N = 1000
 
 # Definition for polynomial codifier
 chosen_matrices = [5]
@@ -36,7 +38,7 @@ chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3),
 plot_normal = True
 plot_hamming = False
 plot_cyclic = False
-plot_conv = True
+plot_conv = False
 
 # Reading matrices
 reader = MatrixReader()
@@ -116,9 +118,17 @@ def convolutional_process(table, codes, channels):
     # Decoding
     conv_decoder = ConvDecoder(table)
     for c in range(len(channels)):
+        print("Conv total: " + str(c/len(channels)))
         outputs[c] = np.array(conv_decoder.decode(outputs[c]))
 
     return outputs
+
+
+def p_map(eb_n0s, ratio):
+    ps = []
+    for eb_n0 in eb_n0s:
+        ps.append(1-norm.cdf(sqrt(2*eb_n0/ratio)))
+    return ps
 
 
 if __name__ == "__main__":
