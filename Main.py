@@ -25,7 +25,7 @@ from convolutional_codifiers.ConvDecoder import ConvDecoder
 
 # Script which generates N random bits and simulates a random channel with probabilities ranging from 0.5 to 10e-6.
 # It then plots a graph comparing different encoding processes.
-N = 1000
+N = 100
 
 # Definition for polynomial codifier
 chosen_matrices = [5]
