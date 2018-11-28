@@ -12,6 +12,7 @@ import time
 from scipy.stats import norm
 from math import sqrt
 from Channel import Channel
+from GaussianChannel import GaussianChannel
 from matrix_codifiers.DecoderHamming import DecoderHamming
 from matrix_codifiers.EncoderHamming import EncoderHamming
 from preprocessing.MatrixReader import MatrixReader
@@ -37,7 +38,7 @@ chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3),
 # Plotting types
 plot_normal = True
 plot_hamming = True
-plot_cyclic = True
+plot_cyclic = False
 plot_conv = True
 
 # Reading matrices
@@ -108,11 +109,18 @@ def cyclic_process(index, codes, ei_n0):
     return outputs
 
 
-def convolutional_process(table, codes, ei_n0):
+def convolutional_process(table, codes, ei_n0, type_of_decode):
     # Encoding
     conv_encoder = ConvEncoder(table)
     encode = conv_encoder.encode(codes)
-    channels = [Channel(p) for p in p_map(ei_n0, 1/len(table[0][0][0]))]
+
+    if type_of_decode == 'euclidean':
+        for i in range(len(encode)):
+            if encode[i] == 0:
+                encode[i] = -1
+        channels = [GaussianChannel(p) for p in p_map(ei_n0, 1/len(table[0][0][0]))]
+    else:
+        channels = [Channel(p) for p in p_map(ei_n0, 1 / len(table[0][0][0]))]
 
     # Channeling
     outputs = [None] * len(channels)
@@ -126,7 +134,7 @@ def convolutional_process(table, codes, ei_n0):
         print('Iteracao {:02}/{}'.format(alpha, len(channels)))
         alpha += 1
         conv_decoder = ConvDecoder(table, channels[c].get_p())
-        outputs[c] = np.array(conv_decoder.decode(outputs[c]))
+        outputs[c] = np.array(conv_decoder.decode(outputs[c], type_of_decode))
 
     return outputs
 
@@ -171,7 +179,7 @@ if __name__ == "__main__":
         convolutional_outputs = []
         for matrix in graph_matrices:
             print('PROCESSO: {}/{}'.format(iteracao, 3))
-            convolutional_outputs.append(convolutional_process(matrix, codes, ei_n0))
+            convolutional_outputs.append(convolutional_process(matrix, codes, ei_n0, "euclidean"))
             iteracao += 1
         # convolutional_outputs = [convolutional_process(matrix, codes, channels) for matrix in graph_matrices]
 
@@ -210,7 +218,7 @@ if __name__ == "__main__":
     fig, ax = plt.subplots()
     plt.xlim([0, 11])
     plt.xlabel("EI/N0 (db)")
-    plt.ylabel("probabilidade de erro de bit")
+    plt.ylabel("log(probabilidade de erro de bit)")
     if plot_normal:
         plt1 = plt.plot(ei_n0, normal_ps, label="Não codificado")
     if plot_hamming:

@@ -14,7 +14,7 @@ class ConvDecoder:
 
         self.p = prob
 
-    def decode(self, message):
+    def decode(self, message, weigth_type):
         # Splitting message
         split_message = []
         for j in range(len(message) // self.chunk_size):
@@ -32,7 +32,12 @@ class ConvDecoder:
                 if weights[j] < 0:
                     continue
                 for k in range(2):
-                    transition_weigth = self.hamming_distance(j, k, chunk)
+                    if weigth_type == "hamming":
+                        transition_weigth = self.hamming_distance(j, k, chunk)
+                    elif weigth_type == "exact":
+                        transition_weigth = self.exact_probability(j, k, chunk)
+                    elif weigth_type == "euclidean":
+                        transition_weigth = self.euclidean_distance(j, k, chunk)
                     final = self.table[j][k][1]
                     if current_weights[final] == -1 or current_weights[final] > transition_weigth + weights[j]:
                         current_weights[final] = transition_weigth + weights[j]
@@ -57,6 +62,9 @@ class ConvDecoder:
 
     def euclidean_distance(self, initial, trans, seq):
         output, new = self.table[initial][trans]
+        for i in range(len(output)):
+            if output[i] == 0:
+                output[i] = -1
         cost = 0
         for i in range(self.chunk_size):
             cost += (output[i] - seq[i])**2

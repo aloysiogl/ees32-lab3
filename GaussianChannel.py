@@ -7,10 +7,10 @@ class GaussianChannel:
     def __init__(self, var):
         self.__var = var
 
-    def get_v(self):
+    def get_p(self):
         return self.__var
 
-    def set_v(self, p):
+    def set_p(self, p):
         self.__var = p
 
     def add_noise(self, v):
