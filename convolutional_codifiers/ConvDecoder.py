@@ -2,6 +2,8 @@ import numpy as np
 import preprocessing.TransitionAnalyser as ta
 from math import log
 from convolutional_codifiers.ConvEncoder import ConvEncoder
+from GaussianChannel import GaussianChannel
+from Channel import Channel
 
 
 class ConvDecoder:
@@ -72,17 +74,35 @@ class ConvDecoder:
 
 
 if __name__ == '__main__':
+    # Polynomial definitions
     p1 = np.array([1, 1, 0, 1])
     p2 = np.array([1, 0, 1, 1])
     p3 = np.array([1, 1, 1, 1])
     polarr = [p1, p2, p3]
     gen = ta.TransitionAnalyser(polarr)
 
+    # Encoder and decoder
     codifier = ConvEncoder(gen.table_generate(3))
-    u = [0, 1, 1, 0]
-    print('Encode =', codifier.encode(u))
-
     decoder = ConvDecoder(gen.table_generate(3), 0.2)
-    msg = np.mod(np.array(codifier.encode(u)) + np.array([0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0]), 2)
+
+    # Type
+    type_of_decode = 'euclidean'
+
+    # Vectors
+    u = np.random.random_integers(0, 1, 3)
+    v = codifier.encode(u)
+
+    if type_of_decode == 'euclidean':    # Gaussian Channel
+        for i in range(len(v)):
+            if v[i] == 0:
+                v[i] = -1
+        channel = GaussianChannel(0.2)
+        msg = channel.add_noise(v)
+    else:                               # Others Channels
+        channel = Channel(0.2)
+        msg = channel.add_noise(v)
+
+    print('Word   =', u)
+    print('Encode =', v)
     print('Sent   =', msg)
-    print('Decode =', np.array(decoder.decode(msg)))
+    print('Decode =', np.array(decoder.decode(msg, type_of_decode)))
