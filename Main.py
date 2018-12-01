@@ -13,6 +13,8 @@ from scipy.stats import norm
 from math import sqrt
 from Channel import Channel
 from GaussianChannel import GaussianChannel
+from matrix_codifiers.Decoder import Decoder
+from matrix_codifiers.Encoder import Encoder
 from matrix_codifiers.DecoderHamming import DecoderHamming
 from matrix_codifiers.EncoderHamming import EncoderHamming
 from preprocessing.MatrixReader import MatrixReader
@@ -39,7 +41,70 @@ chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3),
 plot_normal = True
 plot_hamming = True
 plot_cyclic = False
-plot_conv = True
+plot_conv = False
+plot_improved = False
+
+# Defining generator matrices
+
+P6 = np.array([[1, 1, 1, 0, 0, 0],
+               [1, 1, 0, 1, 0, 0],
+               [1, 1, 0, 0, 1, 0],
+               [1, 1, 0, 0, 0, 1],
+               [1, 0, 1, 1, 0, 0],
+               [1, 0, 1, 0, 1, 0],
+               [1, 0, 1, 0, 0, 1],
+               [1, 0, 0, 1, 1, 0]])
+
+P9 = np.array([[1, 1, 1, 1, 0, 0, 0, 0, 0],
+               [1, 1, 0, 0, 1, 1, 0, 0, 0],
+               [1, 1, 0, 0, 0, 0, 1, 1, 0],
+               [1, 0, 1, 0, 1, 0, 1, 0, 0],
+               [1, 0, 1, 0, 0, 1, 0, 0, 1],
+               [1, 0, 0, 1, 0, 1, 0, 1, 0],
+               [1, 0, 0, 1, 0, 0, 1, 0, 1],
+               [1, 0, 0, 0, 1, 0, 0, 1, 1],
+               [0, 1, 1, 0, 0, 0, 0, 1, 1],
+               [0, 1, 0, 1, 1, 0, 0, 0, 1],
+               [0, 1, 0, 0, 0, 1, 1, 0, 1],
+               [1, 1, 1, 1, 1, 1, 1, 1, 1]])
+
+P12 = np.array([[1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+                [1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+                [1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+                [1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0],
+                [1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
+                [1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0],
+                [1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0],
+                [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0],
+                [1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0],
+                [1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0],
+                [1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0],
+                [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0],
+                [1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+                [1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1],
+                [1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1],
+                [1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1]])
+
+P15 = np.array([[1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+                [1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+                [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0],
+                [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+                [1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
+                [1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+                [1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
+                [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+                [1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+                [1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0],
+                [1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+                [1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+                [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+                [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0],
+                [1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0],
+                [1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+                [1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0]])
 
 # Reading matrices
 reader = MatrixReader()
@@ -75,6 +140,35 @@ def hamming_process(codes, ei_n0):
     hamming_decoder = DecoderHamming()
     for c in range(len(channels)):
         outputs[c] = np.array([hamming_decoder.decode(code) for code in outputs[c]])
+        outputs[c] = outputs[c].flatten()
+
+    return outputs
+
+
+def improved_process(P, codes, channels):
+    improved_codes = []
+    n = P.shape[0]
+    # print(n)
+    # exit()
+    assert len(codes) % n == 0
+    for c in range(len(codes) // n):
+        improved_codes.append(np.array(codes[c * n:c * n + n]))
+
+    # Encoding
+    improved_encoder = Encoder(P)
+    encodes = [improved_encoder.encode(code) for code in improved_codes]
+
+    # Channeling
+    outputs = [None] * len(channels)
+    for c in range(len(channels)):
+        outputs[c] = np.array([channels[c].add_noise(code) for code in encodes])
+
+    # Decoding
+    n = P.shape[1] // 3
+    improved_decoder = Decoder(P, n + 1)
+    for c in range(len(channels)):
+        outputs[c] = np.array([improved_decoder.decode(code) for code in outputs[c]])
+        print("processing_imporved...")
         outputs[c] = outputs[c].flatten()
 
     return outputs
@@ -179,13 +273,22 @@ if __name__ == "__main__":
         convolutional_outputs = []
         for matrix in graph_matrices:
             print('PROCESSO: {}/{}'.format(iteracao, 3))
-            convolutional_outputs.append(convolutional_process(matrix, codes, ei_n0, "euclidean"))
+            convolutional_outputs.append(convolutional_process(matrix, codes, ei_n0, "hamming"))
             iteracao += 1
         # convolutional_outputs = [convolutional_process(matrix, codes, channels) for matrix in graph_matrices]
+    if plot_improved:
+        improved_outputs6 = improved_process(P6, codes, channels)
+        improved_outputs9 = improved_process(P9, codes, channels)
+        improved_outputs12 = improved_process(P12, codes, channels)
+        improved_outputs15 = improved_process(P15, codes, channels)
 
     # Comparing outputs and plotting a graph
     normal_ps = []
     hamming_ps = []
+    improved_ps6 = []
+    improved_ps9 = []
+    improved_ps12 = []
+    improved_ps15 = []
     if plot_cyclic:
         cyclic_ps = [[] for p in range(len(cyclic_outputs))]
     if plot_conv:
@@ -202,7 +305,6 @@ if __name__ == "__main__":
             for i in range(len(convolutional_outputs)):
                 assert len(convolutional_outputs[i][c]) == len(codes)
                 convolutional_ps[i].append((1 - np.count_nonzero(convolutional_outputs[i][c] == codes) / N))
-    ei_n0 = 10*np.log(ei_n0) / np.log(10)
     if plot_normal:
         normal_ps = np.log(normal_ps) / np.log(10)
     if plot_hamming:
@@ -213,6 +315,13 @@ if __name__ == "__main__":
     if plot_conv:
         for i in range(len(convolutional_ps)):
             convolutional_ps[i] = np.log(convolutional_ps[i]) / np.log(10)
+    if plot_improved:
+        improved_ps6 = np.log(improved_ps6) / np.log(10)
+        improved_ps9 = np.log(improved_ps9) / np.log(10)
+        improved_ps12 = np.log(improved_ps12) / np.log(10)
+        improved_ps15 = np.log(improved_ps15) / np.log(10)
+        
+    ps = np.log(ps) / np.log(10)
 
     print("Time taken:", time.time() - t, "s")
     fig, ax = plt.subplots()
@@ -231,5 +340,11 @@ if __name__ == "__main__":
         plt_conv = []
         for i in range(len(convolutional_ps)):
             plt_conv.append(plt.plot(ei_n0, convolutional_ps[i], label="Polinomio " + str(i)))
+            plt_conv.append(plt.plot(ps, convolutional_ps[i], label="Polinomio " + str(i)))
+    if plot_improved:
+        plt3 = plt.plot(ps, improved_ps6, label="Código 14x6")
+        plt4 = plt.plot(ps, improved_ps9, label="Código 21x9")
+        plt5 = plt.plot(ps, improved_ps12, label="Código 28x12")
+        plt6 = plt.plot(ps, improved_ps15, label="Código 35x15")
     ax.legend()
     plt.show()
