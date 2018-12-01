@@ -27,7 +27,7 @@ from convolutional_codifiers.ConvDecoder import ConvDecoder
 
 # Script which generates N random bits and simulates a random channel with probabilities ranging from 0.5 to 10e-6.
 # It then plots a graph comparing different encoding processes.
-N = 100
+N = 960
 
 # Definition for polynomial codifier
 chosen_matrices = [5]
@@ -42,7 +42,7 @@ plot_normal = True
 plot_hamming = True
 plot_cyclic = False
 plot_conv = False
-plot_improved = False
+plot_improved = True
 
 # Defining generator matrices
 
@@ -145,7 +145,7 @@ def hamming_process(codes, ei_n0):
     return outputs
 
 
-def improved_process(P, codes, channels):
+def improved_process(P, codes, ei_n0):
     improved_codes = []
     n = P.shape[0]
     # print(n)
@@ -159,6 +159,7 @@ def improved_process(P, codes, channels):
     encodes = [improved_encoder.encode(code) for code in improved_codes]
 
     # Channeling
+    channels = [Channel(p) for p in p_map(ei_n0,  P.shape[0] / (P.shape[0]+P.shape[1]))]
     outputs = [None] * len(channels)
     for c in range(len(channels)):
         outputs[c] = np.array([channels[c].add_noise(code) for code in encodes])
@@ -168,7 +169,7 @@ def improved_process(P, codes, channels):
     improved_decoder = Decoder(P, n + 1)
     for c in range(len(channels)):
         outputs[c] = np.array([improved_decoder.decode(code) for code in outputs[c]])
-        print("processing_imporved...")
+        print("processing_improved...")
         outputs[c] = outputs[c].flatten()
 
     return outputs
@@ -277,10 +278,10 @@ if __name__ == "__main__":
             iteracao += 1
         # convolutional_outputs = [convolutional_process(matrix, codes, channels) for matrix in graph_matrices]
     if plot_improved:
-        improved_outputs6 = improved_process(P6, codes, channels)
-        improved_outputs9 = improved_process(P9, codes, channels)
-        improved_outputs12 = improved_process(P12, codes, channels)
-        improved_outputs15 = improved_process(P15, codes, channels)
+        improved_outputs6 = improved_process(P6, codes, ei_n0)
+        improved_outputs9 = improved_process(P9, codes, ei_n0)
+        improved_outputs12 = improved_process(P12, codes, ei_n0)
+        improved_outputs15 = improved_process(P15, codes, ei_n0)
 
     # Comparing outputs and plotting a graph
     normal_ps = []
@@ -298,6 +299,11 @@ if __name__ == "__main__":
             normal_ps.append(1 - np.count_nonzero(normal_outputs[c] == codes) / N)
         if plot_hamming:
             hamming_ps.append(1 - np.count_nonzero(hamming_outputs[c] == codes) / N)
+        if plot_improved:
+            improved_ps6.append(1 - np.count_nonzero(improved_outputs6[c] == codes) / N)
+            improved_ps9.append(1 - np.count_nonzero(improved_outputs9[c] == codes) / N)
+            improved_ps12.append(1 - np.count_nonzero(improved_outputs12[c] == codes) / N)
+            improved_ps15.append(1 - np.count_nonzero(improved_outputs15[c] == codes) / N)
         if plot_cyclic:
             for i in range(len(cyclic_outputs)):
                 cyclic_ps[i].append((1 - np.count_nonzero(cyclic_outputs[i][c] == codes) / N))
@@ -320,8 +326,6 @@ if __name__ == "__main__":
         improved_ps9 = np.log(improved_ps9) / np.log(10)
         improved_ps12 = np.log(improved_ps12) / np.log(10)
         improved_ps15 = np.log(improved_ps15) / np.log(10)
-        
-    ps = np.log(ps) / np.log(10)
 
     print("Time taken:", time.time() - t, "s")
     fig, ax = plt.subplots()
@@ -340,11 +344,10 @@ if __name__ == "__main__":
         plt_conv = []
         for i in range(len(convolutional_ps)):
             plt_conv.append(plt.plot(ei_n0, convolutional_ps[i], label="Polinomio " + str(i)))
-            plt_conv.append(plt.plot(ps, convolutional_ps[i], label="Polinomio " + str(i)))
     if plot_improved:
-        plt3 = plt.plot(ps, improved_ps6, label="Código 14x6")
-        plt4 = plt.plot(ps, improved_ps9, label="Código 21x9")
-        plt5 = plt.plot(ps, improved_ps12, label="Código 28x12")
-        plt6 = plt.plot(ps, improved_ps15, label="Código 35x15")
+        plt3 = plt.plot(ei_n0, improved_ps6, label="Código 14x6")
+        plt4 = plt.plot(ei_n0, improved_ps9, label="Código 21x9")
+        plt5 = plt.plot(ei_n0, improved_ps12, label="Código 28x12")
+        plt6 = plt.plot(ei_n0, improved_ps15, label="Código 35x15")
     ax.legend()
     plt.show()
