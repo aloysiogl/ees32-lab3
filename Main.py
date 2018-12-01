@@ -39,10 +39,10 @@ chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3),
 
 # Plotting types
 plot_normal = True
-plot_hamming = True
+plot_hamming = False
 plot_cyclic = False
 plot_conv = False
-plot_improved = True
+plot_improved = False
 
 # Defining generator matrices
 
@@ -241,6 +241,12 @@ def p_map(eb_n0s, ratio):
     return ps
 
 
+def output_variable(var, name):
+    name = './out/'+name
+    file = open(name, "w")
+    file.write(str(var))
+
+
 if __name__ == "__main__":
     t = time.time()
 
@@ -327,13 +333,16 @@ if __name__ == "__main__":
         improved_ps12 = np.log(improved_ps12) / np.log(10)
         improved_ps15 = np.log(improved_ps15) / np.log(10)
 
+    print("Done")
     print("Time taken:", time.time() - t, "s")
     fig, ax = plt.subplots()
     plt.xlim([0, 11])
     plt.xlabel("EI/N0 (db)")
     plt.ylabel("log(probabilidade de erro de bit)")
+    output_variable(ei_n0, "ei_n0.txt")
     if plot_normal:
         plt1 = plt.plot(ei_n0, normal_ps, label="Não codificado")
+        output_variable(normal_ps, "normal_ps.txt")
     if plot_hamming:
         plt2 = plt.plot(ei_n0, hamming_ps, label="Hamming")
     if plot_cyclic:
