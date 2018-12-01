@@ -27,7 +27,7 @@ from convolutional_codifiers.ConvDecoder import ConvDecoder
 
 # Script which generates N random bits and simulates a random channel with probabilities ranging from 0.5 to 10e-6.
 # It then plots a graph comparing different encoding processes.
-N = 960
+N = 240
 
 # Definition for polynomial codifier
 chosen_matrices = [5]
@@ -39,10 +39,10 @@ chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3),
 
 # Plotting types
 plot_normal = True
-plot_hamming = False
-plot_cyclic = False
-plot_conv = False
-plot_improved = False
+plot_hamming = True
+plot_cyclic = True
+plot_conv = True
+plot_improved = True
 
 # Defining generator matrices
 
@@ -197,7 +197,7 @@ def cyclic_process(index, codes, ei_n0):
     poly_decoder = PolyDecoder(gen, len(gen))
 
     for c in range(len(channels)):
-        print("processing...")
+        print("processing_cyclic...")
         outputs[c] = np.array([poly_decoder.decode(code) for code in outputs[c]])
         outputs[c] = outputs[c].flatten()
     print("over")
@@ -244,7 +244,8 @@ def p_map(eb_n0s, ratio):
 def output_variable(var, name):
     name = './out/'+name
     file = open(name, "w")
-    file.write(str(var))
+    for num in var:
+        file.write(str(num)+'\n')
 
 
 if __name__ == "__main__":
@@ -345,18 +346,25 @@ if __name__ == "__main__":
         output_variable(normal_ps, "normal_ps.txt")
     if plot_hamming:
         plt2 = plt.plot(ei_n0, hamming_ps, label="Hamming")
+        output_variable(hamming_ps, "hamming_ps.txt")
     if plot_cyclic:
         plt_cycl = []
         for i in range(len(cyclic_ps)):
             plt_cycl.append(plt.plot(ei_n0, cyclic_ps[i], label=reader.get_name(chosen_matrices[i])))
+            output_variable(cyclic_ps[i], "cyclic"+reader.get_name(chosen_matrices[i])+"_ps.txt")
     if plot_conv:
         plt_conv = []
         for i in range(len(convolutional_ps)):
             plt_conv.append(plt.plot(ei_n0, convolutional_ps[i], label="Polinomio " + str(i)))
+            output_variable(convolutional_ps[i], "convolutional" + "_pol_" + str(i) + "_ps.txt")
     if plot_improved:
         plt3 = plt.plot(ei_n0, improved_ps6, label="Código 14x6")
         plt4 = plt.plot(ei_n0, improved_ps9, label="Código 21x9")
         plt5 = plt.plot(ei_n0, improved_ps12, label="Código 28x12")
         plt6 = plt.plot(ei_n0, improved_ps15, label="Código 35x15")
+        output_variable(improved_ps6, "matrix_improved_" + "14x6")
+        output_variable(improved_ps9, "matrix_improved_" + "21x9")
+        output_variable(improved_ps12, "matrix_improved_" + "28x12")
+        output_variable(improved_ps15, "matrix_improved_" + "35x15")
     ax.legend()
     plt.show()
