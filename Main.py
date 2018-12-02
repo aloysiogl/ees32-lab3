@@ -27,10 +27,10 @@ from convolutional_codifiers.ConvDecoder import ConvDecoder
 
 # Script which generates N random bits and simulates a random channel with probabilities ranging from 0.5 to 10e-6.
 # It then plots a graph comparing different encoding processes.
-N = 96000
+N = 96768
 
 # Definition for polynomial codifier
-chosen_matrices = [5]
+chosen_matrices = [1, 2, 5, 9, 10]
 
 # Definition for convolutional codifier
 chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3),
@@ -38,11 +38,11 @@ chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3),
                       ([[1, 1, 7], [1, 2, 7], [1, 5, 5]], 6)]
 
 # Plotting types
-plot_normal = True
-plot_hamming = True
+plot_normal = False
+plot_hamming = False
 plot_cyclic = True
 plot_conv = True
-plot_improved = True
+plot_improved = False
 
 # Defining generator matrices
 
@@ -281,7 +281,7 @@ if __name__ == "__main__":
         convolutional_outputs = []
         for matrix in graph_matrices:
             print('PROCESSO: {}/{}'.format(iteracao, 3))
-            convolutional_outputs.append(convolutional_process(matrix, codes, ei_n0, "hamming"))
+            convolutional_outputs.append(convolutional_process(matrix, codes, ei_n0, "exact"))
             iteracao += 1
         # convolutional_outputs = [convolutional_process(matrix, codes, channels) for matrix in graph_matrices]
     if plot_improved:
