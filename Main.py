@@ -216,14 +216,18 @@ def convolutional_process(table, codes, ei_n0, type_of_decode):
         ei = len(table[0][0][0])
         channels = [GaussianChannel(ei / (2 * v)) for v in ei_n0]
         # channels = [GaussianChannel(p) for p in p_map(ei_n0, 1/len(table[0][0][0]))]
+        # Channeling
+        outputs = [None] * len(channels)
+
+        for c in range(len(channels)):
+            outputs[c] = np.array(channels[c].add_noise(np.array(encode, dtype=float)), dtype=float)
     else:
         channels = [Channel(p) for p in p_map(ei_n0, 1 / len(table[0][0][0]))]
+        # Channeling
+        outputs = [None] * len(channels)
 
-    # Channeling
-    outputs = [None] * len(channels)
-
-    for c in range(len(channels)):
-        outputs[c] = np.array(channels[c].add_noise(np.array(encode, dtype=int)), dtype=int)
+        for c in range(len(channels)):
+            outputs[c] = np.array(channels[c].add_noise(np.array(encode, dtype=int)), dtype=int)
 
     # Decoding
     alpha = 1
@@ -283,8 +287,12 @@ if __name__ == "__main__":
         convolutional_outputs = []
         for matrix in graph_matrices:
             print('PROCESSO: {}/{}'.format(iteracao, 3))
-            convolutional_outputs.append(convolutional_process(matrix, codes, ei_n0, "exact"))
+            convolutional_outputs.append(convolutional_process(matrix, codes, ei_n0, "euclidean"))
             iteracao += 1
+        # for matrix in graph _matrices:
+        #     print('PROCESSO: {}/{}'.format(iteracao, 3))
+        #     convolutional_outputs.append(convolutional_process(matrix, codes, ei_n0, "exact"))
+        #     iteracao += 1
         # convolutional_outputs = [convolutional_process(matrix, codes, channels) for matrix in graph_matrices]
     if plot_improved:
         improved_outputs6 = improved_process(P6, codes, ei_n0)
