@@ -213,7 +213,9 @@ def convolutional_process(table, codes, ei_n0, type_of_decode):
         for i in range(len(encode)):
             if encode[i] == 0:
                 encode[i] = -1
-        channels = [GaussianChannel(p) for p in p_map(ei_n0, 1/len(table[0][0][0]))]
+        ei = len(table[0][0][0])
+        channels = [GaussianChannel(ei / (2 * v)) for v in ei_n0]
+        # channels = [GaussianChannel(p) for p in p_map(ei_n0, 1/len(table[0][0][0]))]
     else:
         channels = [Channel(p) for p in p_map(ei_n0, 1 / len(table[0][0][0]))]
 
