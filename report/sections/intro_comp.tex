@@ -1,7 +1,7 @@
 \section{Comparação Justa}
 Nas práticas anteriores, para comparar a eficácia dos códigos utilizados, montavam-se gráficos da probabilidade de erro (eixo y) pela probabilidade de erro de bit no canal (eixo x) em escala logarítmica. Embora essa comparação forneça uma noção  a respeito da melhora obtida por um determinado código, a comparação não leva em conta que a introdução de redundância aumenta a energia que é utilizada para transmitir um bit de informação.
 
-Poderíamos apenas aumentar a energia de uma codificação considerada menos eficiente anteriormente e ela teria probabilidade de erro menor. Dessa forma, a comparação justa deveria supor mesmo $\frac{E_i}{N_0}$. Supondo uma modulação BPSK, $p\left(\frac{E_b}{N_0}\right) = Q\left(\sqrt{\frac{E_b}{N_0}}\right)$. Dessa forma, considerando mesmo $\frac{E_i}{N_0}$, tem-se $p\left(\frac{E_i}{N_0}\right) = Q\left(\sqrt{\frac{E_i}{N_0}\frac{k}{n}}\right)$.
+Poderíamos apenas aumentar a energia de uma codificação considerada menos eficiente anteriormente e ela teria probabilidade de erro menor. Dessa forma, a comparação justa deveria supor mesmo $\frac{E_i}{N_0}$. Supondo uma modulação BPSK, $p\left(\frac{E_b}{N_0}\right) = Q\left(\sqrt{\frac{2E_b}{N_0}}\right)$. Dessa forma, considerando mesmo $\frac{E_i}{N_0}$, tem-se $p\left(\frac{E_i}{N_0}\right) = Q\left(\sqrt{\frac{2E_i}{N_0}\frac{k}{n}}\right)$.
 
 Os valores de $p$ utilizados nos experimentos anteriores foram remapeados supondo $k = n$. Dessa forma, obtiveram-se valores de $\frac{E_i}{N_0}$ para serem utilizados para cada tipo de codificação. Ressalta-se que tais valores foram muito parecidos com uma sequência de 0 a 10 igualmente espaçada. Os valores são apresentados abaixo.
 

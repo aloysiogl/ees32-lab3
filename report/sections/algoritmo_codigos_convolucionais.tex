@@ -1,83 +1,150 @@
 \section{Algoritmos para códigos convolucionais}
-%A algoritmo desenvolvido pode ser dividido nas seguintes etapas: obtenção dos polinômios geradores, codificação, e decodificação. Cada uma dessas etapas esta descrita nas subseções seguintes.
-%
-%\subsection{Obtenção dos polinômios geradores}
-%Foram escolhidos, inicialmente, cinco tipos de códigos deferentes com duplas $(k, n)$ mostradas a seguir contidas em $S = \{(6, 10), (7, 12), (8, 14), (9, 15), (9, 16)\}$. Para cada elemento de $S$ foram gerados todos os polinômios geradores $g_{ij}$ em que $i$ é o índice em $S$ e $j$ o índice de um polinômio qualquer que gere um código $S_i$. Com este fim, foi utilizada a função \textit{cyclpoly} do MATLAB.
-%
-%Para cada $i$ dentre todos os $j$ escolhe-se o polinômio $g_{ij}$ que gera o código de maior distância mínima. Para isso, geraram-se todas as palavras informação e calculou-se o peso de cada palavra código a fim de achar a distância mínima. A complexidade desta etapa é $\mathcal{O}(2^kn^{3.37})$. Considerou-se o pior caso da multiplicação de matriz $\mathcal{O}(n^{2.37})$, uma vez que para o cálculo da palavra código pela palavra informação utilizou-se a multiplicação matricial. O algoritmo descrito foi implementado na linguagem \textit{Python}.
-%
-%A principal dificuldade desta parte do código foi achar a distância mínima, no entanto, muito se pôde aproveitar da atividade anterior. Dessa forma a dificuldade desta etapa não foi tão grande.
-%
+A algoritmo desenvolvido pode ser dividido nas seguintes etapas: codificação, e decodificação. Cada uma dessas etapas esta descrita nas subseções seguintes.
+
 \subsection{Codificação}
+
+% DIFICULDADES PARA IMPLMENTAR CODIFICADOR
+
+A codificação consistiu processar os bits de entrada pela máquina de estado descrita pelos polinômios geradores fornecidos, descritos pela Tabela \ref{tab:polinomios_geradores}. $m$ indica a quantidade de memórias da máquina, e, consequentemente, o número de estados que ela pode atingir.
+
+\begin{table}[h!]
+	\centering
+	\caption{Polinômios geradores na forma octal}
+	\label{tab:polinomios_geradores}
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		$m$ & $g1(D)$ & $g2(D)$ & $g3(D)$ \\ \hline\hline
+		 3  &   13    &   15    &   17    \\ \hline
+		 4  &   25    &   33    &   37    \\ \hline
+		 6  &   117   &   127   &   155   \\ \hline
+	\end{tabular} 
+\end{table}
+
+Partindo do estado nulo, o processamento da máquina consiste em dado um bit, gerar 3 bits codificados de acordo com o valor armazenado nas $m$ memórias e os polinômios geradores, deslocar o valor das memórias, e então o bit recebido passa a ocupar a primeira memória. Dessa forma, o código possui taxa $1/3$.
+
+%Sendo $G(D)$ uma matriz cujas linhas representam os polinômios geradores e $u(D)$ a mensagem a ser transmitida. Matematicamente, a mensagem codificada, $v(D)$, pode ser interpretado como descrito em (\ref{eq:mensagem_codificada}).
 %
-%A codificação consistiu simplesmente de uma multiplicação de polinômios, a qual foi feita em \textit{Python} utilizando a função \textit{polymul} da biblioteca \textit{numpy}. Dessa forma a complexidade de codificação do sistema ficou $\mathcal{O}(n^2)$ para uma palavra código de tamanho $n$.
+%\begin{equation}
+%	s(D) = u(D).G(D)
+%\end{equation}
 %
-%Vale ressaltar que o canal utilizado foi exatamente o mesmo do experimento anterior, por isso, sua implementação não será detalhada neste documento.
-%
+%\begin{equation}
+%	v(D) = \sum_{i=1}^{n} s_{i}(D^{n})D^{i-1}
+%	\label{eq:mensagem_codificada}
+%\end{equation}
+
+
 \subsection{Decodificação}
+
+Nesta parte do experimento é necessário utilizar o algoritmo de Viterbi para realizar a decodificação do código gerado. A ideia por trás desse algoritmo é armazenar os custos dos caminhos possíveis, a partir do estado nulo, de acordo com a mensagem transmitida. O custo de um caminho é obtido pela soma dos custos dos ramos que formam o percurso.
+
+Para evitar, crescer exponencialmente com as possibilidades de percursos, o algoritmo de Viterbi aproveita-se do fato que vários percursos levam a um mesmo estado. Assim, pode-se escolher apenas o percurso mais provável para aquele estado um instante de tempo. Como critério é usado que o caminho mais provável é o com menor custo, pois está sendo adotado que o canal tem maior taxa de acerto.
+
+Para decidir a sequencia correta que foi transmitida foi implementado o algoritmo de Viterbi já descrito. O pseudocódigo para tal algoritmo é mostrado em Algoritmo \ref{alg:viterbi}.
+
+\begin{algorithm}[h!]
+	\caption{Decodificação}
+	\label{alg:viterbi}
+	\begin{algorithmic}[Message]		
+		\Procedure{$decode$}{$message$}
+			\State $Custo[0] \gets 0$
+			\State $Custo[i] \gets \infty, \forall i \ne 0$
+			
+			\For {$simb \in message$}
+				\For {$Estados futuro - f$}
+					\State $Custo[f] \gets min(Custo[i] + trans(i, f, simb))$
+				\EndFor
+			\EndFor
+			
+			\State {$x \gets min(Custo)$}					
+			
+		\Return $caminho[x]$
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+Para calcular o custo de determinada transição é usado a distância de Hamming entre o simbolo recebido e o simbolo associado à transição. O Algoritmo \ref{alg:hamming} apresenta o pseudocódigo para esse caso.
+
+\begin{algorithm}[h!]
+	\caption{Distância de Hamming}
+	\label{alg:hamming}
+	\begin{algorithmic}[Message]		
+		\Procedure{$hamming$}{$inicial$, $final$, $simb$}
+		\State $esperado \gets simbolo(inicial, final)$
+		\State $custo = 0$
+		
+		\For {$i \in len(simb)$}
+			\State $custo += simb[i] + esperado[i] \% 2$
+		\EndFor
+		
+		\Return $custo$
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+A fim de obter melhores resultados para a decodificação é possível realizar algumas alteração no algoritmo de Viterbi. Duas dessas possíveis alterações são descritas nas subseções seguintes.
 
 \subsubsection{Primeira variação}
 
+A primeira alteração no algoritmo de Viterbi consiste em usar o valor real, sem aproximação, de $\log(P[s|r])$. 
+
+Ao calcular $\log(P[s|r])$ obtemos uma expressão da forma:
+
+\begin{equation}
+	\log(P[s|r]) \propto a\log[1-p] + b\log[p]
+\end{equation}
+
+para valores pequenos de $p$ o termo $\log[1-p]$ pode ser aproximado para $0$, fornecendo a aproximação usado inicialmente. Porém, para valores mais significativos de $p$ esse termo não se torna desprezível.
+
+O Algoritmo \ref{alg:exact} apresenta o pseudocódigo para o calculo do custo utilizando a primeira variação.
+
+\begin{algorithm}[h!]
+	\caption{Distância Exata}
+	\label{alg:exact}
+	\begin{algorithmic}[Message]		
+		\Procedure{$exact$}{$inicial$, $final$, $simb$, $p$}
+		\State $h = hamming(inicial, final, simb)$
+		
+		\State $custo = h.\log[p] + (len(simb) - h).\log[1-p]$
+			
+		\Return $custo$
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+Vale ressaltar que agora é necessário obter o caminho de custo máximo visto que ao aplicar o $\log$ será obtido custos negativos. 
+
 \subsubsection{Segunda variação}
-%
-%Esta foi a parte mais desafiadora do experimento por envolver a correção de erros. A decodificação consiste em uma divisão polinomial da palavra código pelo polinômio gerador, considerando que, se houver resto (síndrome), deve ser feita correção de erros.
-%
-%Vale ressaltar que o código foi implementado em \textit{Python} e que a divisão de polinômios foi implementada seguindo o algoritmo de divisão manual com soma resto 2. A complexidade final do algoritmo de divisão polinomial ficou $\mathcal{O}(n^2)$.
-%
-%Para corrigir os erros foi implementado o algoritmo sugerido no roteiro do laboratório, que realiza rotações para ser capaz de utilizar unicamente síndromes associadas a erros na primeira posição da palavra código. O pseudocódigo para tal algoritmo é mostrado em Algoritmo \ref{alg:decode}.
-%
-%\begin{algorithm}
-%	\caption{Decodificação}\label{alg:decode}
-%	\begin{algorithmic}[Message]
-%		\Procedure{$decode$}{$message$}
-%			\State $sind \gets calc\_sindrome(message)$
-%			
-%			\While {$sind \neq all\_zeros$}
-%				\If {$sind \in end\_one\_sinds$}
-%					\State $change\_first(message)$
-%					\State $sind \gets calc\_sindrome(message)$
-%				\Else
-%				\State $rotate(message, -1)$
-%				\State $rotate(sind, -1)$
-%					\If{$sind.first = 1$} 
-%						\State $sind.first \gets 0$
-%						\State $sind \gets sind+g$
-%					\EndIf
-%				\EndIf
-%			\EndWhile
-%		\State $message \gets unrotate(message)$\\
-%		\Return $divide(message, g)$
-%		\EndProcedure
-%	\end{algorithmic}
-%\end{algorithm}
-%
-%A parte mais desafiadora da atividade foi encontrar o conjunto de síndromes, representado no algoritmo por $end\_one\_sinds$. Consta em Algoritmo \ref{alg:update_sindromes} o código utilizado para encontrar um conjunto de síndromes associadas a erros que começam em 1 de maneira a garantir que o código de Algoritmo \ref{alg:decode} termine em ao menos $n$ ciclos do laço mais externo.
-%
-%\begin{algorithm}
-%	\caption{Decodificação}\label{alg:update_sindromes}
-%	\begin{algorithmic}[Message]
-%		\Procedure{$update\_sindrom	es$}{$ $}
-%		\State $sind\_map \gets \emptyset$
-%		\For {$i \in \{1, len(codeword)\}$}
-%			\State $errs \gets list(errors, weigth=i)$
-%			\For {$err \in errs$}
-%				\State $err_key \gets calc\_sindrome(err)$
-%				\If {$err\_key=all\_zeros$}
-%					\State $continue$
-%				\EndIf
-%				
-%				\If {$err\_key \notin sind\_map $ $\cup$\\ $weigth(sind\_map[err\_key]) = i$ $\cap$ \\ $error\_ends\_with\_zero(sind\_map[err\_key])$}
-%				\State $sind\_map[err\_key] \gets (err.first, i)$
-%				\EndIf
-%			\EndFor
-%		\EndFor
-%		\For {$key \in sind\_map$}
-%			\If{$error\_ends\_with\_one(sind\_map[err\_key])$}
-%				\State $end\_one\_sinds.add(key)$
-%			\EndIf
-%		\EndFor
-%		\EndProcedure
-%	\end{algorithmic}
-%\end{algorithm}
-%
-%A complexidade de decodificação do sistema é  $\mathcal{O}(n^2h)$, em que $h$ é o tamanho do conjunto de síndromes.
+
+A próxima alteração no algoritmo de Viterbi consiste em utilizar uma modulação digital BPSK através de um canal AWGN. 
+
+Para realizar a modulação BPSK, realiza-se a seguinte conversão: os bits com valor $0$ se tornam $-1$ e os bits com valor $1$ são mantidos.
+
+A transmissão pelo canal AWGN introduz um ruído Gaussiano Branco à mensagem transmitida. Para isso, insere-se o ruído como um sinal aleatório com média $\mu = 0$ e variância $\sigma^{2} = \frac{N_{0}}{2}$, em que $N_{0}$ se relaciona com a probabilidade de erro do canal por:
+
+%% VERIFICAR FORMULA
+\begin{equation}
+	N_{0} = \frac{2}{R E_{i} (Q^{-1}(p))^{2}}
+\end{equation}
+
+Com isso, é necessário agora alterar a função de custo para calcular a distância euclidiana entre o o simbolo recebido e o simbolo esperado. O pseudocódigo para essa alteração é mostrado no Algoritmo \ref{alg:euclidean}.
+
+\begin{algorithm}[h!]
+	\caption{Distância Euclidiana}
+	\label{alg:euclidean}
+	\begin{algorithmic}[Message]		
+		\Procedure{$euclidean$}{$inicial$, $final$, $simb$}
+		\State $esperado \gets simbolo(inicial, final)$
+		\State $custo = 0$
+		
+		\For {$i \in len(simb)$}
+		\State $custo += (simb[i] - esperado[i])^{2}$
+		\EndFor
+		
+		\Return $custo$
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+A decisão do caminho ótimo é realizada com base no percurso com menor custo final.
+
