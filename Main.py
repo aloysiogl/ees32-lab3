@@ -318,6 +318,7 @@ if __name__ == "__main__":
             for i in range(len(convolutional_outputs)):
                 assert len(convolutional_outputs[i][c]) == len(codes)
                 convolutional_ps[i].append((1 - np.count_nonzero(convolutional_outputs[i][c] == codes) / N))
+    ei_n0 = 10 * np.log(ei_n0) / np.log(10)
     if plot_normal:
         normal_ps = np.log(normal_ps) / np.log(10)
     if plot_hamming:
