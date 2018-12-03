@@ -64,12 +64,11 @@ class ConvDecoder:
 
     def euclidean_distance(self, initial, trans, seq):
         output, new = self.table[initial][trans]
-        for i in range(len(output)):
-            if output[i] == 0:
-                output[i] = -1
         cost = 0
+        # print(seq)
         for i in range(self.chunk_size):
-            cost += (output[i] - seq[i])**2
+            cost += (output[i]*2-1 - seq[i])**2
+            # print(output[i])
         return cost
 
 
