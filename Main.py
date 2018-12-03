@@ -40,7 +40,7 @@ chosen_polynomials = [([[1, 3], [1, 5], [1, 7]], 3),
 # Plotting types
 plot_normal = False
 plot_hamming = False
-plot_cyclic = True
+plot_cyclic = False
 plot_conv = True
 plot_improved = False
 
@@ -207,7 +207,9 @@ def cyclic_process(index, codes, ei_n0):
 def convolutional_process(table, codes, ei_n0, type_of_decode):
     # Encoding
     conv_encoder = ConvEncoder(table)
+    # print(len(codes))
     encode = conv_encoder.encode(codes)
+
 
     if type_of_decode == 'euclidean':
         for i in range(len(encode)):
