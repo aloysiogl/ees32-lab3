@@ -1,11 +1,19 @@
 \section{Algoritmos para códigos convolucionais}
-A algoritmo desenvolvido pode ser dividido nas seguintes etapas: codificação, e decodificação. Cada uma dessas etapas esta descrita nas subseções seguintes.
+A algoritmo desenvolvido pode ser dividido nas seguintes etapas: gerar diagrama de transição, codificação, e decodificação. Cada uma dessas etapas esta descrita nas subseções seguintes.
+
+\section{Gerar diagrama de transição}
+
+Para realizar a codificação necessita-se, primeiramente, gerar o diagrama de transição de estados para a máquina de $m$ memórias descrita em \cite{ref:roteiro_lab3}. 
+
+Uma transição qualquer da máquina dado um bit de entrada fornece $n$ bits de saída conforme for desejado, dependendo da quantidade de polinômios geradores.
+Após uma transição o estado é alterado da seguinte forma: desloca-se as $m-1$ primeiras memórias em uma posição, na primeira posição coloca-se o bit de entrada.
+
+Por fim, o diagrama de transição de estados é feito simulando, para todos os estados da máquina, as duas transições possíveis, 0 ou 1.
+
 
 \subsection{Codificação}
 
-% DIFICULDADES PARA IMPLMENTAR CODIFICADOR
-
-A codificação consistiu processar os bits de entrada pela máquina de estado descrita pelos polinômios geradores fornecidos, descritos pela Tabela \ref{tab:polinomios_geradores}. $m$ indica a quantidade de memórias da máquina, e, consequentemente, o número de estados que ela pode atingir.
+A codificação consistiu processar os bits de entrada pela máquina de estado descrita pelos polinômios geradores fornecidos, descritos pela Tabela \ref{tab:polinomios_geradores}. $m$ indica a quantidade de memórias da máquina. Sabendo que cada memória possui 0's ou 1's é possível atingir $2^{m}$ estados.
 
 \begin{table}[h!]
 	\centering
@@ -20,18 +28,7 @@ A codificação consistiu processar os bits de entrada pela máquina de estado d
 	\end{tabular} 
 \end{table}
 
-Partindo do estado nulo, o processamento da máquina consiste em dado um bit, gerar 3 bits codificados de acordo com o valor armazenado nas $m$ memórias e os polinômios geradores, deslocar o valor das memórias, e então o bit recebido passa a ocupar a primeira memória. Dessa forma, o código possui taxa $1/3$.
-
-%Sendo $G(D)$ uma matriz cujas linhas representam os polinômios geradores e $u(D)$ a mensagem a ser transmitida. Matematicamente, a mensagem codificada, $v(D)$, pode ser interpretado como descrito em (\ref{eq:mensagem_codificada}).
-%
-%\begin{equation}
-%	s(D) = u(D).G(D)
-%\end{equation}
-%
-%\begin{equation}
-%	v(D) = \sum_{i=1}^{n} s_{i}(D^{n})D^{i-1}
-%	\label{eq:mensagem_codificada}
-%\end{equation}
+Partindo do estado nulo, o processamento da máquina consiste em dado um bit, gerar 3 bits codificados de acordo com o valor fornecido pela transição de estado da máquina. Dessa forma, o código possui taxa $1/3$.
 
 
 \subsection{Decodificação}
@@ -45,13 +42,13 @@ Para decidir a sequencia correta que foi transmitida foi implementado o algoritm
 \begin{algorithm}[h!]
 	\caption{Decodificação}
 	\label{alg:viterbi}
-	\begin{algorithmic}[Message]		
+	\begin{algorithmic}		
 		\Procedure{$decode$}{$message$}
 			\State $Custo[0] \gets 0$
 			\State $Custo[i] \gets \infty, \forall i \ne 0$
 			
 			\For {$simb \in message$}
-				\For {$Estados futuro - f$}
+				\For {$Estados futuro: f$}
 					\State $Custo[f] \gets min(Custo[i] + trans(i, f, simb))$
 				\EndFor
 			\EndFor
@@ -68,13 +65,13 @@ Para calcular o custo de determinada transição é usado a distância de Hammin
 \begin{algorithm}[h!]
 	\caption{Distância de Hamming}
 	\label{alg:hamming}
-	\begin{algorithmic}[Message]		
+	\begin{algorithmic}		
 		\Procedure{$hamming$}{$inicial$, $final$, $simb$}
 		\State $esperado \gets simbolo(inicial, final)$
 		\State $custo = 0$
 		
 		\For {$i \in len(simb)$}
-			\State $custo += simb[i] + esperado[i] \% 2$
+			\State $custo += (simb[i] + esperado[i]) \% 2$
 		\EndFor
 		
 		\Return $custo$
@@ -82,7 +79,7 @@ Para calcular o custo de determinada transição é usado a distância de Hammin
 	\end{algorithmic}
 \end{algorithm}
 
-A fim de obter melhores resultados para a decodificação é possível realizar algumas alteração no algoritmo de Viterbi. Duas dessas possíveis alterações são descritas nas subseções seguintes.
+A fim de obter melhores resultados para a decodificação é possível realizar algumas alteração no algoritmo de Viterbi. Duas dessas possíveis alterações, apresentadas em \cite{ref:roteiro_lab4}, são descritas nas subseções seguintes.
 
 \subsubsection{Primeira variação}
 
@@ -101,7 +98,7 @@ O Algoritmo \ref{alg:exact} apresenta o pseudocódigo para o calculo do custo ut
 \begin{algorithm}[h!]
 	\caption{Distância Exata}
 	\label{alg:exact}
-	\begin{algorithmic}[Message]		
+	\begin{algorithmic}		
 		\Procedure{$exact$}{$inicial$, $final$, $simb$, $p$}
 		\State $h = hamming(inicial, final, simb)$
 		
@@ -122,17 +119,19 @@ Para realizar a modulação BPSK, realiza-se a seguinte conversão: os bits com 
 
 A transmissão pelo canal AWGN introduz um ruído Gaussiano Branco à mensagem transmitida. Para isso, insere-se o ruído como um sinal aleatório com média $\mu = 0$ e variância $\sigma^{2} = \frac{N_{0}}{2}$, em que $N_{0}$ se relaciona com a probabilidade de erro do canal por:
 
-%% VERIFICAR FORMULA
 \begin{equation}
-	N_{0} = \frac{2}{R E_{i} (Q^{-1}(p))^{2}}
+	\frac{N_{0}}{2} = \frac{E_{i} R}{[Q^{-1}(p)]^{2}}
 \end{equation}
+
+\noindent
+onde $E_{i}$ é a energia por bit de informação, $R$ é a taxa do código, $Q(x)$ é a função de distribuição acumulada para uma variável aleatória gaussiana com média $\mu = 0$ e desvio padrão $\sigma=1$ e $p$ é a probabilidade de erro do canal.
 
 Com isso, é necessário agora alterar a função de custo para calcular a distância euclidiana entre o o simbolo recebido e o simbolo esperado. O pseudocódigo para essa alteração é mostrado no Algoritmo \ref{alg:euclidean}.
 
 \begin{algorithm}[h!]
 	\caption{Distância Euclidiana}
 	\label{alg:euclidean}
-	\begin{algorithmic}[Message]		
+	\begin{algorithmic}
 		\Procedure{$euclidean$}{$inicial$, $final$, $simb$}
 		\State $esperado \gets simbolo(inicial, final)$
 		\State $custo = 0$
