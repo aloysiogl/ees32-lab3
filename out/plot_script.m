@@ -41,8 +41,11 @@ plot(x, polyval(polyfit(ei_n0(1:14), normal(1:14),7), x))
 %plot(x, pchip(ei_n0, matrix_improved_28x12, x))
 %plot(x, pchip(ei_n0, matrix_improved_35x15, x))
 %plot(x, pchip(ei_n0, conv_ham0, x))
+plot(x, polyval(polyfit(ei_n0(1:9), conv_ham0(1:9),7), x))
 %plot(x, pchip(ei_n0, conv_ham1, x))
+plot(x, polyval(polyfit(ei_n0(1:8), conv_ham1(1:8),5), x))
 %plot(x, pchip(ei_n0, conv_ham2, x))
+plot(x, polyval(polyfit(ei_n0(1:7), conv_ham2(1:7),4), x))
 %plot(x, pchip(ei_n0, conv_exa0, x))
 %plot(x, pchip(ei_n0, conv_exa1, x))
 %plot(x, pchip(ei_n0, conv_exa2, x))
@@ -52,8 +55,12 @@ plot(x, polyval(polyfit(ei_n0(1:14), normal(1:14),7), x))
 %plot(x, polyval(polyfit(ei_n0(1:5), conv_euc2(1:5),4), x))
 xlim([-2 10])
 ylim([-4 0])
-title('Comparação códigos desenvolvidos pela equipe')
+title('Comparação códigos convolucionais')
 ylabel('log(probabilidade de erro)')
 xlabel('E_i/N_0 (dB)')
-legend('Não codificado', 'Código 14x6', 'Código 21x9', ...
-'Código 28x12', 'Código 35x15')
+%legend('Não codificado', 'Comparação Hamming polinômio 1', 'Comparação Hamming polinômio 2', ...
+%'Comparação Hamming polinômio 3', 'Comparação Exata polinômio 1', 'Comparação Exata polinômio 2', ...
+%'Comparação Exata polinômio 3', 'Comparação Euclidiana polinômio 1', 'Comparação Euclidiana polinômio 2', ...
+%'Comparação Euclidiana polinômio 3');
+legend('Não codificado', 'Comparação Hamming polinômio 1', 'Comparação Hamming polinômio 2', ...
+'Comparação Hamming polinômio 3');
