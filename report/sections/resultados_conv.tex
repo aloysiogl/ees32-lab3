@@ -46,7 +46,66 @@ As Figuras \ref{fig:convolucionais1}, \ref{fig:convolucionais2}, e \ref{fig:conv
 	\caption{\label{fig:convolucionais3}Comparação da eficácia dos códigos convolucionais com distância Euclidiana para 96768 bits de informação enviados.}
 \end{figure}
 
+As Figuras \ref{fig:geral} mostra uma comparação entre todos os códigos (é exibido apenas um representante para cada grupo).
 
+\begin{figure}[ht]
+	\centering
+	\captionsetup{justification=centering}
+	\includegraphics[scale=0.45]{floats/geral.png}
+	\caption{\label{fig:geral}Comparação da eficácia de um representante para cada grupo de códigos para 96768 bits de informação enviados.}
+\end{figure}
+
+Para uma taxa de $\frac{1}{3}$ teoricamente o valor de $\frac{E_i}{N_0}$ que permite transmissão com probabilidade de erro zero é de 0.59. Para uma probabilidade de erro de $10^{-4}$ o melhor código convolucional obteve $\frac{E_i}{N_0}$ de 1.86. Isso mostra que o sistema ainda está longe do limite teórico. A Tabela \ref{tab:teorico} mostra tal comparação para cada código analisado.
+
+\begin{table}[h]
+\centering
+\caption {Comparação $\frac{E_i}{N_0}$ teórico para probabilidade de erro de transmissão zero e real para probabilidade de erro de transmissão $10^{-4}$} \label{tab:teorico} 
+\begin{tabular}{|c|c|c|}
+	\hline 
+Código analisado	&  Valor teórico de $\frac{E_i}{N_0}$  & Valor real de $\frac{E_i}{N_0}$\\
+	\hline 
+	Hamming	&  0.81 & 11.0\\ 
+	\hline 
+	Cíclico 6x10	&  1.30 & 11.0\\ 
+	\hline 
+	Cíclico 7x12	&  1.25 & 7.1\\ 
+	\hline 
+	Cíclico 8x14	&  1.20 & 6.3\\ 
+	\hline 
+	Cíclico 9x15	&  1.30 & 6.3\\ 
+	\hline 
+	Cíclico 9x16	&  1.18 & 11.5\\ 
+	\hline 
+	Código próprio 6x14	&  1.20 & 7.0\\ 
+	\hline 
+	Código próprio 9x21	&  1.20 & 5.0\\ 
+	\hline 
+	Código próprio 12x28	&  1.20 & 5.0\\ 
+	\hline 
+	Código próprio 15x35	&  1.20 & 5.0\\ 
+	\hline 
+	Código conv Hamming pol1	&  0.59 & 4.22\\ 
+	\hline 
+	Código conv Hamming pol2	&  0.59 & 3.98\\ 
+	\hline 
+	Código conv Hamming pol3	&  0.59 & 3.16\\ 
+	\hline
+	Código conv Exact pol1	&  0.59 & 3.98\\ 
+	\hline 
+	Código conv Exact pol2	&  0.59 & 3.98\\ 
+	\hline 
+	Código conv Exact pol3	&  0.59 & 3.10\\ 
+	\hline
+	Código conv Euclidean pol1	&  0.59 & 2.66\\ 
+	\hline 
+	Código conv Euclidean pol2	&  0.59 & 2.51\\ 
+	\hline 
+	Código conv Euclidean pol3	&  0.59 & 1.86\\ 
+	\hline
+	
+\end{tabular} 
+
+\end{table}
 %
 %\subsection{Códigos cíclicos não-BCH}
 %

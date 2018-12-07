@@ -3,3 +3,7 @@
 A maior dificuldade da implementação do codificador foi conseguir gerar o diagrama de transição de estados para efetuar o processamento da maquina, uma vez que realizar a convolução de sinais discretos possui um custo computacional mais elevado que cresce de acordo com o tamanho da mensagem.
 
 Para o decodificador o maior desafio foi a implementação do algoritmo de Viterbi, uma vez que na primeira versão do código um pequeno detalhe de implementação gerou resultados errados retardando o desenvolvimento do decodificador. Outra dificuldade foi, no momento da implementação das variações, a implementação da segunda variação uma vez que foi necessário alterar o canal e alguns trechos do código foram alterados para operar com variáveis de ponto flutuante.
+
+Da comparação das curvas mostradas nos resultados é possível inferir que os códigos convolucionais são mais eficazes. Nota-se, também que alguns dos códigos desenvolvidos pela equipe são melhores que o código de Hamming e que os códigos cíclicos. Muitos dos códigos cíclicos são piores que o sistema não codificado para quase todos os valores de $\frac{E_i}{N_0}$ considerados.
+
+Quanto à comparação entre os códigos convolucionais, nota-se que o uso da distância 'Exata' fornece alguma melhor para valores de $p$ elevados, no entanto, essa melhora não foi tão significativa quanto quando foi utilizada a distância euclidiana. Nossos resultados foram significativamente melhores para os códigos que utilizaram distância euclidiana no algorítimo de Viterbi.
