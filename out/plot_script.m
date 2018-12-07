@@ -46,15 +46,17 @@ plot(x, polyval(polyfit(ei_n0(1:14), normal(1:14),7), x))
 %plot(x, polyval(polyfit(ei_n0(1:8), conv_ham1(1:8),5), x))
 %plot(x, pchip(ei_n0, conv_ham2, x))
 %plot(x, polyval(polyfit(ei_n0(1:7), conv_ham2(1:7),4), x))
-plot(x, pchip(ei_n0, conv_exa0, x))
+%plot(x, pchip(ei_n0, conv_exa0, x))
 %plot(x, pchip(ei_n0, conv_exa1, x))
-plot(x, polyval(polyfit(ei_n0(1:8), conv_exa1(1:8),5), x))
+%plot(x, polyval(polyfit(ei_n0(1:8), conv_exa1(1:8),5), x))
 %plot(x, pchip(ei_n0, conv_exa2, x))
-plot(x, polyval(polyfit(ei_n0(1:6), conv_exa2(1:6),4), x))
+%plot(x, polyval(polyfit(ei_n0(1:6), conv_exa2(1:6),4), x))
 %plot(x, pchip(ei_n0, conv_euc0, x))
+plot(x(1:13), polyval(polyfit(ei_n0(1:7), conv_euc0(1:7),5), x(1:13)))
 %plot(x, pchip(ei_n0, conv_euc1, x))
+plot([x(1:2),x(5:10)], [pchip(ei_n0, conv_euc1, x(1:2)),polyval(polyfit(ei_n0(1:6), conv_euc1(1:6),5), x(5:10))])
 %plot(x, pchip(ei_n0, conv_euc2, x))
-%plot(x, polyval(polyfit(ei_n0(1:5), conv_euc2(1:5),4), x))
+plot(x, polyval(polyfit(ei_n0(1:5), conv_euc2(1:5),4), x))
 xlim([-2 10])
 ylim([-4 0])
 title('Comparação códigos convolucionais')
@@ -64,5 +66,5 @@ xlabel('E_i/N_0 (dB)')
 %'Comparação Hamming polinômio 3', 'Comparação Exata polinômio 1', 'Comparação Exata polinômio 2', ...
 %'Comparação Exata polinômio 3', 'Comparação Euclidiana polinômio 1', 'Comparação Euclidiana polinômio 2', ...
 %'Comparação Euclidiana polinômio 3');
-legend('Não codificado', 'Comparação Exata polinômio 1', 'Comparação Exata polinômio 2', ...
-'Comparação Exata polinômio 3');
+legend('Não codificado', 'Comparação Euclidiana polinômio 1', 'Comparação Euclidiana polinômio 2', ...
+'Comparação Euclidiana polinômio 3');
