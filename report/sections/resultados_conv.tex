@@ -3,6 +3,18 @@ O codificador convolucional foi capaz de realizar, em média, a codificação de
 
 O código foi feito em Python, uma linguagem interpretada, logo, não há arquivo executável. Somando o tamanho de todos os arquivos desenvolvidos durante essa disciplina de laboratório, totaliza-se 100kB. Se forem levados em conta os arquivos das dependências (principalmente numpy e scipy) tem-se um total de 155.5MB. Dessa forma, para executar o projeto desenvolvido como um todo deve-se ter cerca de 160MB disponíveis em disco.
 
+Há um total de vinte grandezas a serem comparadas, o sistema não codificado, o código de Hamming, cinco códigos cíclicos, quatro códigos gerados pela equipe, e nove códigos convolucionais (3 para cada métrica). A fim de tornar a comparação mais fácil, serão exibidos gráficos para cada grupo e um gráfico final comparando um representante de cada grupo. A fim de suavizar as curvas foi utilizado um fit polinomial por meio da função \textit{pchip} do Matlab.
+
+A Figura \ref{fig:cyclic} mostra uma comparação entre todos os códigos cíclicos desenvolvidos.
+
+\begin{figure}[ht]
+	\centering
+	\captionsetup{justification=centering}
+	\includegraphics[scale=0.45]{floats/cyclic.png}
+	\caption{\label{fig:cyclic}Comparação da eficácia dos códigos cíclicos para 96768 bits de informação enviados.}
+\end{figure}
+
+
 %
 %\subsection{Códigos cíclicos não-BCH}
 %
