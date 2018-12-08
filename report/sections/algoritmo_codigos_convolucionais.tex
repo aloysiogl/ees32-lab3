@@ -1,7 +1,7 @@
 \section{Algoritmos para códigos convolucionais}
 A algoritmo desenvolvido pode ser dividido nas seguintes etapas: gerar diagrama de transição, codificação, e decodificação. Cada uma dessas etapas esta descrita nas subseções seguintes.
 
-\section{Gerar diagrama de transição}
+\subsection{Gerar diagrama de transição}
 
 Para realizar a codificação necessita-se, primeiramente, gerar o diagrama de transição de estados para a máquina de $m$ memórias descrita em \cite{ref:roteiro_lab3}. 
 
@@ -60,6 +60,7 @@ Para decidir a sequencia correta que foi transmitida foi implementado o algoritm
 	\end{algorithmic}
 \end{algorithm}
 
+\newpage
 Para calcular o custo de determinada transição é usado a distância de Hamming entre o simbolo recebido e o simbolo associado à transição. O Algoritmo \ref{alg:hamming} apresenta o pseudocódigo para esse caso.
 
 \begin{algorithm}[h!]

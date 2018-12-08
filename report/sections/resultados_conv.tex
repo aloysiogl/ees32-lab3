@@ -10,54 +10,57 @@ A Figura \ref{fig:cyclic} mostra uma comparação entre todos os códigos cícli
 \begin{figure}[ht]
 	\centering
 	\captionsetup{justification=centering}
-	\includegraphics[scale=0.45]{floats/cyclic.png}
+	\includegraphics[width=\linewidth]{floats/cyclic.png}
 	\caption{\label{fig:cyclic}Comparação da eficácia dos códigos cíclicos para 96768 bits de informação enviados.}
 \end{figure}
 
+\newpage
 A Figura \ref{fig:proprios} mostra uma comparação entre todos os códigos desenvolvidos pela equipe na primeira prática.
 
 \begin{figure}[ht]
 	\centering
 	\captionsetup{justification=centering}
-	\includegraphics[scale=0.45]{floats/proprios.png}
+	\includegraphics[width=\linewidth]{floats/proprios.png}
 	\caption{\label{fig:proprios}Comparação da eficácia dos códigos desenvolvidos pela equipe para 96768 bits de informação enviados.}
 \end{figure}
 
+\newpage
 As Figuras \ref{fig:convolucionais1}, \ref{fig:convolucionais2}, e \ref{fig:convolucionais3} mostram uma comparação entre todos os códigos convolucionais com as métricas de Hamming, Exata e distância Euclidiana respectivamente. A taxa para todos é $\frac{1}{3}$ e os polinômios utilizados são os do roteiro numerados na ordem em que aparecem no roteiro.
 
 \begin{figure}[ht]
 	\centering
 	\captionsetup{justification=centering}
-	\includegraphics[scale=0.45]{floats/conv1.png}
+	\includegraphics[width=\linewidth]{floats/conv1.png}
 	\caption{\label{fig:convolucionais1}Comparação da eficácia dos códigos convolucionais com distância de Hamming para 96768 bits de informação enviados.}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\captionsetup{justification=centering}
-	\includegraphics[scale=0.45]{floats/conv2.png}
+	\includegraphics[width=\linewidth]{floats/conv2.png}
 	\caption{\label{fig:convolucionais2}Comparação da eficácia dos códigos convolucionais com distância 'Exata' para 96768 bits de informação enviados.}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\captionsetup{justification=centering}
-	\includegraphics[scale=0.45]{floats/conv3.png}
+	\includegraphics[width=\linewidth]{floats/conv3.png}
 	\caption{\label{fig:convolucionais3}Comparação da eficácia dos códigos convolucionais com distância Euclidiana para 96768 bits de informação enviados.}
 \end{figure}
 
-As Figuras \ref{fig:geral} mostra uma comparação entre todos os códigos (é exibido apenas um representante para cada grupo).
+\newpage
+A Figura \ref{fig:geral} mostra uma comparação entre todos os códigos (é exibido apenas um representante para cada grupo).
 
 \begin{figure}[ht]
 	\centering
 	\captionsetup{justification=centering}
-	\includegraphics[scale=0.45]{floats/geral.png}
+	\includegraphics[width=\linewidth]{floats/geral.png}
 	\caption{\label{fig:geral}Comparação da eficácia de um representante para cada grupo de códigos para 96768 bits de informação enviados.}
 \end{figure}
 
 Para uma taxa de $\frac{1}{3}$ teoricamente o valor de $\frac{E_i}{N_0}$ que permite transmissão com probabilidade de erro zero é de 0.59. Para uma probabilidade de erro de $10^{-4}$ o melhor código convolucional obteve $\frac{E_i}{N_0}$ de 1.86. Isso mostra que o sistema ainda está longe do limite teórico. A Tabela \ref{tab:teorico} mostra tal comparação para cada código analisado.
 
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 \caption {Comparação $\frac{E_i}{N_0}$ teórico para probabilidade de erro de transmissão zero e real para probabilidade de erro de transmissão $10^{-4}$} \label{tab:teorico} 
 \begin{tabular}{|c|c|c|}
@@ -106,64 +109,4 @@ Código analisado	&  Valor teórico de $\frac{E_i}{N_0}$  & Valor real de $\frac
 \end{tabular} 
 
 \end{table}
-%
-%\subsection{Códigos cíclicos não-BCH}
-%
-%\subsubsection{Polinômios geradores e distâncias mínimas}
-%Os polinômios geradores utilizados e suas respectivas distâncias mínimas de código associado são mostradas em Listagem \ref{lst:polinomios}. Os índices são os mesmos do conjunto $S$ apresentado junto ao algoritmo. As distâncias mínimas, com mesma indexação de $S$, foram $\{2, 4, 3, 4, 2\}$.
-%
-%\begin{align}
-%	\nonumber
-%	p_1 = D^4+D^3+D^2+D+1\\ \nonumber
-%	p_2 = D^5+D^3+D^2+1\\ \nonumber
-%	p_3 = D^6+D^2+1\\ \nonumber
-%	p_4 = D^6+D^4+D^3+D^2+1\\
-%	p_5 = D^7+D^6+D^5+D^4+D^3+D^2+D+1
-%	\label{lst:polinomios}
-%\end{align}
-%
-%\subsubsection{Desempenho dos códigos cíclicos}
-%
-%Um gráfico comparativo entre os códigos aqui desenvolvidos e o código de Hamming é mostrado na Figura \ref{fig:cyclic_comparison}
-%
-%\begin{figure}[!hb]
-%	\centering
-%	\captionsetup{justification=centering}
-%	\includegraphics[scale=0.6]{floats/cyclic_5x10e6.png}
-%	\caption{\label{fig:cyclic_comparison}Comparação da eficácia dos códigos cíclicos para 5004720 bits de informação enviados.}
-%\end{figure}
-%
-%A título de comparação, a Figura \ref{fig:non_cyclic_comparison} traz os resultados do experimento anterior, o qual empregou códigos não necessariamente cíclicos obtidos pela tentativa de maximizar a distância mínima por meio de incrementos no tamanho de bloco.
-%
-%\begin{figure}[!hb]
-%	\centering
-%	\captionsetup{justification=centering}
-%	\includegraphics[scale=0.45]{floats/non_cyclic.png}
-%	\caption{\label{fig:non_cyclic_comparison}Comparação da eficácia dos códigos não necessariamente cíclicos para 1000080 bits de informação enviados.}
-%\end{figure}
-%
-%\subsection{Códigos BCH}
-%
-%\subsubsection{\label{complexidade_decod}Complexidade de decodificação BCH}
-%
-%Segundo \cite{ref:algoritmo-berlekamp}, a decodificação de códigos BCH se dá em $\mathcal{O}(n)$, $n$ sendo o tamanho de bloco empregado. Para confirmar a validade dessa afirmação, construíram-se códigos $BCH(m, 3)$, com $m \in \lbrace 4,5,...,20 \rbrace$, e mediram-se os tempos de decodificação submetendo a mesma palavra a cada um deles, com resultados ilustrados pela Figura \ref{fig:bch_decoding_is_linear}.
-%
-%\begin{figure}[!hb]
-%	\centering
-%    \captionsetup{justification=centering}
-%	\includegraphics[scale=0.3]{floats/bch-decode-is-linear.eps}
-%	\caption{\label{fig:bch_decoding_is_linear}Tempo de decodificação para BCH com variados tamanhos de bloco.}
-%\end{figure}
-%
-%\subsubsection{\label{desempenho_bch}Desempenho do BCH}
-%
-%Para comparar o código BCH aos outros cíclicos, procurou-se um BCH de taxa próxima a 4/7 (usada como referência nos outros códigos deste laboratório), elegendo-se $BCH(5, 3)$ para ser submetido a testes sob canal BSC. A escolha se deu com base no polinômio gerador calculado, $g(X)=X^{15}+X^{11}+X^{10}+X^9+X^8+X^7+X^5+X^3+X^2+X+1$, que rendeu ao código taxa $\frac{31-15}{31}\simeq 0.52\simeq \frac{4}{7}\simeq 0.57$.
-%
-%Somente pela superior distância mínima projetada (3), era de se esperar que $BCH(5,3)$ superasse todos os outros códigos descritos neste texto. Isso é corroborado pela Figura \ref{fig:bch_performance}, na qual se vê que ele supera $Hamming(4,7)$ (que, por sua vez, tinha o mesmo desempenho aproximado dos outros códigos cíclicos).
-%
-%\begin{figure}[!hb]
-%	\centering
-%    \captionsetup{justification=centering}
-%	\includegraphics[scale=0.6]{floats/bch-performance.eps}
-%	\caption{\label{fig:bch_performance}Chances de erro de bit de informação para $BCH(5,3)$ e $Hamming(4,7)$ sujeitos a canais BSC de variadas taxas de erro de bit.}
-%\end{figure}
+\newpage
